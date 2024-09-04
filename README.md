@@ -1,12 +1,13 @@
 # Quiz App com Python, Flet e Google Sheets
 
-Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos.
+Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos sobre Scrum.
 
 ## Tecnologias Utilizadas:
 
 - **Python:** A linguagem de programação principal, escolhida por sua clareza e expressividade.
 - **Flet:** Um framework moderno que permite criar interfaces de usuário web reativas e atraentes usando apenas Python, simplificando o desenvolvimento.
 - **Google Sheets:** Usado como banco de dados flexível para armazenar as perguntas e respostas do quiz, tornando a atualização do conteúdo fácil e acessível.
+- **Google Docs:** Usado para armazenar as perguntas do quiz em um formato fácil de editar e gerenciar, com a integração permitindo a atualização automática do quiz a partir do documento.
 
 ## Tela Inicial:
 
@@ -21,7 +22,6 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 ### Em Desenvolvimento Ativo:
 
 - **Funcionalidades Essenciais do Quiz:**
-    - Carregamento de 30 perguntas aleatórias do Google Sheets para garantir uma experiência variada a cada tentativa.
     - Apresentação de quatro opções de resposta para cada pergunta, desafiando o conhecimento dos usuários de forma eficaz.
     - Implementação de um temporizador de 1 hora para criar uma atmosfera de desafio e simular um ambiente de teste real.
     - Feedback imediato sobre a resposta escolhida, informando se está correta ou incorreta, e permitindo que os usuários aprendam durante o processo.
@@ -34,6 +34,9 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
     - Interface da tela inicial, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
     - Estrutura de código organizada em múltiplos arquivos, cada um com sua responsabilidade bem definida, facilitando a manutenção e a evolução do projeto. 
     - Implementação de um sistema de cache offline usando JSON, garantindo que os usuários possam aproveitar o quiz mesmo sem conexão com a internet.
+    - Integração com Google Sheets para carregar perguntas, permitindo que o conteúdo do quiz seja gerenciado de forma externa e fácil.
+    - Integração com Google Docs para carregar perguntas, automatizando o processo de atualização do quiz a partir de um documento centralizado.
+    - Monitoramento contínuo do Google Docs para atualização automática, garantindo que o quiz esteja sempre atualizado com as últimas perguntas.
 
 ## Próximos Passos:
 

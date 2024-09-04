@@ -3,10 +3,10 @@ import time
 from flet import (
     Column,
     Text,
-    TextButton,
     ElevatedButton,
     Row,
     TextField,
+    TextButton,
     AlertDialog,
     IconButton,
     icons,
@@ -15,33 +15,47 @@ from flet import (
     SnackBar,
 )
 
+
 class QuizUI:
     """
-    Gerencia a interface do usuário do aplicativo de quiz, incluindo a tela inicial, 
+    Gerencia a interface do usuário do aplicativo de quiz, incluindo a tela inicial,
     a tela do quiz e os resultados.
     """
+
     def __init__(self, page: ft.Page, quiz_logic):
         """Inicializa a interface do usuário do quiz."""
 
         self.page = page  # Referência à página principal do aplicativo Flet
-        self.quiz_logic = quiz_logic  # Instância da classe QuizLogic para gerenciar a lógica do quiz
+        self.quiz_logic = (
+            quiz_logic  # Instância da classe QuizLogic para gerenciar a lógica do quiz
+        )
 
         # Define os elementos da interface do usuário, inicialmente invisíveis
-        self.question_text = Text(size=20, visible=False)  # Widget de texto para exibir a pergunta
+        self.question_text = Text(
+            size=20, visible=False
+        )  # Widget de texto para exibir a pergunta
         self.answer_buttons = []  # Lista para armazenar os botões de resposta
         for _ in range(4):
-            button = ElevatedButton(on_click=self.check_answer, visible=False)  # Cria cada botão de resposta
+            button = ElevatedButton(
+                on_click=self.check_answer, visible=False
+            )  # Cria cada botão de resposta
             self.answer_buttons.append(button)
-        self.feedback_text = Text("", visible=False)  # Widget de texto para exibir feedback sobre a resposta
-        self.score_text = Text(f"Tempo restante: 1:00:00", size=16, visible=False)  # Widget de texto para exibir o tempo restante
-        self.timer = ft.Timer(1, on_timeout=self.update_timer)  # Cria um cronômetro com intervalo de 1 segundo
+        self.feedback_text = Text(
+            "", visible=False
+        )  # Widget de texto para exibir feedback sobre a resposta
+        self.score_text = Text(
+            f"Tempo restante: 1:00:00", size=16, visible=False
+        )  # Widget de texto para exibir o tempo restante
+        self.timer = ft.Timer(
+            1, on_timeout=self.update_timer
+        )  # Cria um cronômetro com intervalo de 1 segundo
 
         # Constrói a interface inicial do aplicativo
-        self.build_initial_ui() 
+        self.build_initial_ui()
 
     def build_initial_ui(self):
         """Cria a interface da tela inicial com o ícone do Scrum, botão Iniciar e botão Fechar."""
-        
+
         # Cria o widget de imagem para o ícone do Scrum
         scrum_icon = Image(
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Scrum_logo.svg/2560px-Scrum_logo.svg.png",
@@ -50,10 +64,12 @@ class QuizUI:
         )
 
         # Cria o botão "Iniciar Quiz"
-        button_start = ElevatedButton("Iniciar Quiz", on_click=self.start_quiz) 
+        button_start = ElevatedButton("Iniciar Quiz", on_click=self.start_quiz)
 
         # Cria o botão "Fechar" para fechar o aplicativo
-        button_close = ElevatedButton("Fechar", on_click=lambda _: self.page.window_close()) 
+        button_close = ElevatedButton(
+            "Fechar", on_click=lambda _: self.page.window_close()
+        )
 
         # Adiciona os widgets à página, organizando-os em uma coluna centralizada
         self.page.add(
@@ -71,11 +87,13 @@ class QuizUI:
     def start_quiz(self, e):
         """Inicia o quiz, exibindo uma mensagem se estiver offline."""
         if not self.quiz_logic.check_internet_connection():
-            self.page.snack_bar = SnackBar(ft.Text("Sem conexão com a internet. Carregando perguntas do cache."))
+            self.page.snack_bar = SnackBar(
+                ft.Text("Sem conexão com a internet. Carregando perguntas do cache.")
+            )
             self.page.snack_bar.open = True
             self.page.update()
 
-        self.page.clean() # Limpa os widgets da tela inicial
+        self.page.clean()  # Limpa os widgets da tela inicial
         self.page.add(
             Column(
                 [
@@ -105,13 +123,21 @@ class QuizUI:
             question_text,
             options,
             correct_answer,
-        ) = self.quiz_logic.load_question()  # Obtém a pergunta, opções e resposta correta da lógica do quiz
+        ) = (
+            self.quiz_logic.load_question()
+        )  # Obtém a pergunta, opções e resposta correta da lógica do quiz
         if question_text:
             self.question_text.value = question_text  # Define o texto da pergunta
             for i in range(4):
-                self.answer_buttons[i].text = options[i]  # Define o texto dos botões de resposta
-                self.answer_buttons[i].data = i == correct_answer  # Define qual botão corresponde à resposta correta
-                self.answer_buttons[i].disabled = False  # Habilita os botões de resposta
+                self.answer_buttons[i].text = options[
+                    i
+                ]  # Define o texto dos botões de resposta
+                self.answer_buttons[i].data = (
+                    i == correct_answer
+                )  # Define qual botão corresponde à resposta correta
+                self.answer_buttons[i].disabled = (
+                    False  # Habilita os botões de resposta
+                )
         else:
             self.end_quiz()  # Se não houver mais perguntas, encerra o quiz
         self.page.update()  # Atualiza a interface
@@ -129,12 +155,14 @@ class QuizUI:
 
     def update_timer(self, e):
         """Atualiza o cronômetro do quiz."""
-        time_limit = self.quiz_logic.get_time_remaining()  # Obtém o tempo restante da lógica do quiz
+        time_limit = (
+            self.quiz_logic.get_time_remaining()
+        )  # Obtém o tempo restante da lógica do quiz
         if time_limit == 0:
             self.end_quiz()  # Se o tempo acabar, encerra o quiz
         else:
             # Formata o tempo restante (HH:MM:SS) e atualiza o texto do cronômetro
-            self.score_text.value = f"Tempo restante: {time_limit//3600:02d}:{(time_limit%3600)//60:02d}:{time_limit%60:02d}" 
+            self.score_text.value = f"Tempo restante: {time_limit//3600:02d}:{(time_limit%3600)//60:02d}:{time_limit%60:02d}"
             self.page.update()  # Atualiza a interface
 
     def end_quiz(self):
@@ -156,11 +184,15 @@ class QuizUI:
         dlg_modal = AlertDialog(
             modal=True,
             title=Text("Fim do Quiz!"),
-            content=Text(self.quiz_logic.get_final_results()),  # Obtém os resultados da lógica do quiz
+            content=Text(
+                self.quiz_logic.get_final_results()
+            ),  # Obtém os resultados da lógica do quiz
             actions=[
                 TextButton("Fechar", on_click=close_dlg),  # Botão para fechar o diálogo
             ],
-            on_dismiss=lambda e: print("Modal dialog dismissed!"),  # Ação ao fechar o diálogo
+            on_dismiss=lambda e: print(
+                "Modal dialog dismissed!"
+            ),  # Ação ao fechar o diálogo
         )
         self.page.dialog = dlg_modal  # Define o diálogo na página
         dlg_modal.open = True  # Exibe o diálogo
@@ -169,7 +201,8 @@ class QuizUI:
     def return_to_home(self, e):
         """Retorna à tela inicial, interrompendo o quiz."""
         self.timer.stop()  # Para o cronômetro
-        self.quiz_logic.timer_running = False # Garante que o timer não está mais rodando em segundo plano
+        self.quiz_logic.timer_running = (
+            False  # Garante que o timer não está mais rodando em segundo plano
+        )
         self.build_initial_ui()  # Reconstrói a UI inicial
         self.page.update()
-
