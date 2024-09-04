@@ -35,25 +35,21 @@ def extract_questions_from_doc(document_id):
 
     Returns:
         Uma lista de listas, onde cada sublista representa uma pergunta
-        e suas opções de resposta. A resposta correta é indicada pela
-        letra da opção (a, b, c, d).
+        e suas opções de resposta, com a resposta correta no final.
     """
 
-    # Constrói o serviço Google Docs usando as credenciais
     credentials = service_account.Credentials.from_service_account_file(
         DOCS_CREDENTIALS_FILE, scopes=DOCS_SCOPES
     )
     service = build("docs", "v1", credentials=credentials)
 
-    #  Correção: Utiliza 'service.documents()' para acessar o recurso 'documents'
-    document = service.documents().get(documentId=document_id).execute() 
+    document = service.documents().get(documentId=document_id).execute()
     content = document.get("body").get("content")
 
     questions = []
     current_question = []
     correct_answer = ""
 
-    # Itera sobre os elementos do conteúdo do documento
     for item in content:
         if "paragraph" in item:
             elements = item.get("paragraph").get("elements")
@@ -62,30 +58,30 @@ def extract_questions_from_doc(document_id):
                 for element in elements
             )
 
-            # Remove espaços em branco desnecessários
             text = text.strip()
 
-            # Verifica se é o início de uma nova pergunta
             if text and text[0].isdigit() and text[1] == ".":
                 if current_question:
                     current_question.append(correct_answer)
                     questions.append(current_question)
-                current_question = [text[2:].strip()]
+                current_question = [text[2:].strip()]  # Inicia a pergunta
                 correct_answer = ""
-            # Verifica se é uma opção de resposta
             elif text and text[0] in ["a", "b", "c", "d"] and text[1] == ")":
-                # Verifica se a opção está em negrito (resposta correta)
                 if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
-                    correct_answer = text[0]
-                current_question.append(text[2:].strip())
+                    correct_answer = str(
+                        elements[0].get("textRun", {}).get("content", "").strip()[:1]
+                    )  # Extrai apenas a letra da resposta correta
+                current_question.append(
+                    text[2:].strip()
+                )  # Adiciona a opção de resposta
 
-        # Ignora tabelas no documento
         elif "table" in item:
             continue
 
-    # Adiciona a última pergunta coletada
     if current_question:
-        current_question.append(correct_answer)
+        current_question.append(
+            correct_answer
+        )  # Adiciona a resposta correta à última pergunta
         questions.append(current_question)
 
     return questions
@@ -93,40 +89,43 @@ def extract_questions_from_doc(document_id):
 
 def write_to_spreadsheet(questions, spreadsheet_url):
     """
-    Escreve as perguntas na planilha, evitando duplicatas.
+    Escreve as perguntas na planilha, evitando duplicatas,
+    formatando de acordo com o template:
+    Pergunta | Opção 1 | Opção 2 | Opção 3 | Opção 4 | Resposta
 
     Args:
         questions: Uma lista de listas representando as perguntas e respostas.
         spreadsheet_url: A URL da planilha.
     """
 
-    # Autoriza o acesso à API do Google Sheets
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
         SHEETS_CREDENTIALS_FILE, scopes=SHEETS_SCOPES
     )
     client = gspread.authorize(credentials)
 
-    # Abre a planilha e seleciona a primeira aba
     sheet = client.open_by_url(spreadsheet_url).sheet1
+    existing_questions = sheet.col_values(1)[1:]  # Ignora o cabeçalho
 
-    # Obtém as perguntas existentes na planilha
-    existing_questions = sheet.col_values(1)[1:]
-
-    # Filtra as perguntas para evitar duplicatas
     new_questions = [
         question for question in questions if question[0] not in existing_questions
     ]
 
-    # Adiciona as novas perguntas à planilha
     if new_questions:
-        # Determina o intervalo de células a serem atualizadas
+        # Ajusta o range para começar da próxima linha vazia
         start_row = len(existing_questions) + 2
         end_row = start_row + len(new_questions) - 1
         update_range = f"A{start_row}:F{end_row}"
 
-        # Atualiza a planilha com as novas perguntas
-        sheet.update(update_range, new_questions)
-        print(f"{len(new_questions)} novas perguntas adicionadas à planilha.")
+        # Formata as perguntas para a planilha
+        formatted_questions = []
+        for question in new_questions:
+            formatted_question = [question[0]]  # Pergunta na primeira coluna
+            formatted_question.extend(question[1:-1])  # Opções de resposta
+            formatted_question.append(question[-1])  # Resposta correta
+            formatted_questions.append(formatted_question)
+
+        sheet.update(update_range, formatted_questions)
+        print(f"{len(formatted_questions)} novas perguntas adicionadas à planilha.")
     else:
         print("Nenhuma nova pergunta encontrada.")
 
@@ -134,48 +133,28 @@ def write_to_spreadsheet(questions, spreadsheet_url):
 def monitor_google_docs(document_id, spreadsheet_url, interval=MONITORING_INTERVAL):
     """
     Monitora o Google Docs para alterações e atualiza a planilha.
-
-    Args:
-        document_id: O ID do documento do Google Docs.
-        spreadsheet_url: A URL da planilha.
-        interval: O intervalo de tempo (em segundos) para verificar as alterações.
     """
-
     last_revision_id = None
-
     while True:
         try:
-            # Constrói o serviço Google Docs
             credentials = service_account.Credentials.from_service_account_file(
                 DOCS_CREDENTIALS_FILE, scopes=DOCS_SCOPES
             )
             service = build("docs", "v1", credentials=credentials)
-
-            #  Correção: Utiliza 'service.documents()' para acessar o recurso 'documents'
             document = service.documents().get(documentId=document_id).execute()
             current_revision_id = document["revisionId"]
 
-            # Verifica se houve alterações no documento
             if current_revision_id != last_revision_id:
                 print("Mudanças detectadas no Google Docs. Atualizando a planilha...")
-
-                # Extrai as perguntas do documento
                 questions = extract_questions_from_doc(document_id)
-
-                # Escreve as perguntas na planilha
                 write_to_spreadsheet(questions, spreadsheet_url)
-
-                # Atualiza o ID da última revisão
                 last_revision_id = current_revision_id
 
-            # Aguarda o intervalo de tempo especificado
             time.sleep(interval)
         except Exception as e:
             print(f"Erro ao monitorar o Google Docs: {e}")
-            time.sleep(60)  # Aguarda 1 minuto antes de tentar novamente
+            time.sleep(60)
 
 
-# Inicia o monitoramento quando o script é executado
 if __name__ == "__main__":
     monitor_google_docs(DOCUMENT_ID, SPREADSHEET_URL)
-
