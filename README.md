@@ -13,6 +13,8 @@ A tela inicial do aplicativo exibe um ícone do Scrum, um botão para iniciar o 
 
 ### A Fazer
 
+- [ ] Preencher a planilha com todas as perguntas
+- [x] Cria funções referente a lógica do app
 - [ ] Tela inicial com ícone do Scrum, botão "Iniciar" e "Fechar".
 - [ ] Carregamento de 30 perguntas aleatórias do Google Sheets.
 - [ ] Quatro opções de resposta para cada pergunta.

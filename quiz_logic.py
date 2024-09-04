@@ -1,0 +1,88 @@
+import gspread  # Para interagir com o Google Sheets
+from oauth2client.service_account import ServiceAccountCredentials  # Autenticação com o Google
+import random  # Para embaralhar as opções de resposta
+import time  # Para controlar o tempo
+
+class QuizLogic:
+    """
+    Gerencia a lógica do quiz, incluindo carregamento de perguntas, verificação de respostas
+    e controle do tempo.
+    """
+
+    def __init__(self):
+        """Inicializa a lógica do quiz carregando as perguntas do Google Sheets."""
+
+        # Define o escopo de acesso necessário ao Google Sheets
+        self.scope = [
+            'https://spreadsheets.google.com/feeds',
+            'https://www.googleapis.com/auth/drive'
+        ]
+
+        # Carrega as credenciais da conta de serviço do arquivo 'credentials.json'
+        self.creds = ServiceAccountCredentials.from_json_keyfile_name(
+            'credentials.json', self.scope 
+        )
+
+        # Autoriza o acesso ao Google Sheets
+        self.client = gspread.authorize(self.creds)
+
+        # Abre a planilha específica usando o URL
+        self.sheet = self.client.open_by_url(
+            'https://docs.google.com/spreadsheets/d/1Qg4BoRVHHniWdfibKovZr1x3ZuYHZ9pG9mmhNdZFmWM/edit?usp=sharing'
+        ).sheet1
+
+        # Carrega todas as perguntas (excluindo o cabeçalho)
+        self.all_questions = self.sheet.get_all_values()[1:]
+
+        # Seleciona 30 perguntas aleatórias
+        self.questions = random.sample(self.all_questions, 30)
+
+        # Inicializa variáveis de controle
+        self.current_question = 0  # Índice da pergunta atual
+        self.score = 0  # Pontuação do jogador
+        self.time_limit = 3600  # Tempo limite em segundos (1 hora)
+        self.start_time = time.time()  # Tempo de início do quiz
+        self.timer_running = False  # Indica se o cronômetro está em execução
+
+    def start_timer(self):
+        """Inicia o cronômetro do quiz."""
+        self.start_time = time.time()
+        self.timer_running = True
+
+    def stop_timer(self):
+        """Para o cronômetro do quiz."""
+        self.timer_running = False
+
+    def get_time_remaining(self):
+        """Calcula e retorna o tempo restante no quiz."""
+        if self.timer_running:
+            elapsed_time = int(time.time() - self.start_time)
+            self.time_limit = max(0, 3600 - elapsed_time)
+        return self.time_limit
+
+    def load_question(self):
+        """
+        Carrega a próxima pergunta do quiz, embaralha as opções de resposta
+        e retorna a pergunta, opções e índice da resposta correta.
+        """
+        if self.current_question < len(self.questions):
+            question_data = self.questions[self.current_question]
+            question_text = f"{self.current_question + 1}. {question_data[0]}"
+            options = question_data[1:5]
+            random.shuffle(options)  # Embaralha as opções
+            correct_answer = question_data.index(question_data[5]) - 1
+            return question_text, options, correct_answer
+        else:
+            return None, None, None
+
+    def check_answer(self, selected_answer):
+        """Verifica se a resposta selecionada está correta."""
+        if selected_answer == self.questions[self.current_question].index(self.questions[self.current_question][5]) - 1:
+            self.score += 1
+            return "Resposta correta!"
+        else:
+            return "Resposta incorreta."
+
+    def get_final_results(self):
+        """Retorna os resultados finais do quiz, incluindo a pontuação e a mensagem de aprovação/reprovação."""
+        return f"Sua pontuação final: {self.score}\n{'Aprovado!' if self.score >= 70 else 'Reprovado.'}"
