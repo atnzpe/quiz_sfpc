@@ -60,28 +60,31 @@ def extract_questions_from_doc(document_id):
 
             text = text.strip()
 
-            if text and text[0].isdigit() and text[1] == ".":
+            # Verifica se o parágrafo não está vazio
+            if text:
+                # Verifica se o parágrafo começa com uma letra seguida de ')', o que indica uma opção de resposta
+                if len(text) > 2 and text[1] == ")" and text[0] in ['a', 'b', 'c', 'd']:
+                    current_question.append(text[2:].strip())  # Adiciona a opção à pergunta atual
+                    if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
+                        correct_answer = text[0]  # Define a resposta correta se estiver em negrito
+                else:
+                    # Se não for uma opção, considera como uma nova pergunta
+                    if current_question:
+                        current_question.append(correct_answer)  # Adiciona a resposta correta à pergunta anterior
+                        questions.append(current_question)
+                    current_question = [text]  # Inicia uma nova pergunta
+                    correct_answer = ""
+            else:
+                # Se o parágrafo estiver vazio, termina a pergunta atual
                 if current_question:
                     current_question.append(correct_answer)
                     questions.append(current_question)
-                current_question = [text[2:].strip()]  # Inicia a pergunta
-                correct_answer = ""
-            elif text and text[0] in ["a", "b", "c", "d"] and text[1] == ")":
-                if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
-                    correct_answer = str(
-                        elements[0].get("textRun", {}).get("content", "").strip()[:1]
-                    )  # Extrai apenas a letra da resposta correta
-                current_question.append(
-                    text[2:].strip()
-                )  # Adiciona a opção de resposta
+                    current_question = []
+                    correct_answer = ""
 
-        elif "table" in item:
-            continue
-
+    # Adiciona a última pergunta coletada
     if current_question:
-        current_question.append(
-            correct_answer
-        )  # Adiciona a resposta correta à última pergunta
+        current_question.append(correct_answer)
         questions.append(current_question)
 
     return questions
@@ -89,9 +92,9 @@ def extract_questions_from_doc(document_id):
 
 def write_to_spreadsheet(questions, spreadsheet_url):
     """
-    Escreve as perguntas na planilha, evitando duplicatas,
-    formatando de acordo com o template:
-    Pergunta | Opção 1 | Opção 2 | Opção 3 | Opção 4 | Resposta
+    Escreve as perguntas na planilha, evitando duplicatas e formatando
+    cada pergunta em uma linha separada, com cada elemento da pergunta
+    em uma coluna diferente.
 
     Args:
         questions: Uma lista de listas representando as perguntas e respostas.
@@ -111,20 +114,23 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     ]
 
     if new_questions:
-        # Ajusta o range para começar da próxima linha vazia
-        start_row = len(existing_questions) + 2
-        end_row = start_row + len(new_questions) - 1
-        update_range = f"A{start_row}:F{end_row}"
-
-        # Formata as perguntas para a planilha
         formatted_questions = []
         for question in new_questions:
-            formatted_question = [question[0]]  # Pergunta na primeira coluna
-            formatted_question.extend(question[1:-1])  # Opções de resposta
-            formatted_question.append(question[-1])  # Resposta correta
-            formatted_questions.append(formatted_question)
+            # Formata a Opção 2 em negrito
+            question[2] = f"<b>{question[2]}</b>"
 
-        sheet.update(update_range, formatted_questions)
+            # Adiciona a resposta correta no final, se presente
+            if len(question) > 5 and question[5] in ["a", "b", "c", "d"]:
+                formatted_questions.append(question[:5] + [question[5]])
+            else:
+                formatted_questions.append(question[:5] + [""])
+
+        next_row = len(existing_questions) + 2
+        update_range = f"A{next_row}:F{next_row + len(formatted_questions) - 1}"
+
+        # Correção: Usa a ordem correta dos argumentos e argumentos nomeados
+        sheet.update(values=formatted_questions, range_name=update_range)
+
         print(f"{len(formatted_questions)} novas perguntas adicionadas à planilha.")
     else:
         print("Nenhuma nova pergunta encontrada.")
@@ -133,6 +139,12 @@ def write_to_spreadsheet(questions, spreadsheet_url):
 def monitor_google_docs(document_id, spreadsheet_url, interval=MONITORING_INTERVAL):
     """
     Monitora o Google Docs para alterações e atualiza a planilha.
+
+    Args:
+        document_id: O ID do documento do Google Docs a ser monitorado.
+        spreadsheet_url: A URL da planilha do Google Sheets a ser atualizada.
+        interval: O intervalo de tempo (em segundos) para verificar se há alterações
+                  no Google Docs.
     """
     last_revision_id = None
     while True:
@@ -153,7 +165,7 @@ def monitor_google_docs(document_id, spreadsheet_url, interval=MONITORING_INTERV
             time.sleep(interval)
         except Exception as e:
             print(f"Erro ao monitorar o Google Docs: {e}")
-            time.sleep(60)
+            time.sleep(60)  # Aguarda 1 minuto antes de tentar novamente
 
 
 if __name__ == "__main__":
