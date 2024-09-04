@@ -5,6 +5,7 @@ import time
 from flet import (
     Column,
     Text,
+    TextButton,
     ElevatedButton,
     Row,
     TextField,
@@ -12,7 +13,8 @@ from flet import (
     IconButton,
     icons,
     Page,
-    Image  # Importação necessária para usar imagens
+    Image,
+    SnackBar,# Importação necessária para usar imagens
 )
 
 class QuizUI:
@@ -66,6 +68,12 @@ class QuizUI:
     def start_quiz(self, e):
         """Inicia o quiz, limpando a tela inicial e exibindo a primeira pergunta."""
 
+        """Inicia o quiz, exibindo uma mensagem se estiver offline."""
+        if not self.quiz_logic.check_internet_connection():
+            self.page.snack_bar = SnackBar(ft.Text("Sem conexão com a internet. Carregando perguntas do cache."))
+            self.page.snack_bar.open = True
+            self.page.update()
+        
         self.page.clean() # Limpa os widgets da tela inicial
         self.page.add(
             Column(

@@ -1,42 +1,55 @@
 # Quiz App com Python, Flet e Google Sheets
 
-Este é um aplicativo de quiz interativo desenvolvido com:
+Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos.
 
-- **Python:** Linguagem de programação principal.
-- **Flet:** Framework moderno para construir interfaces de usuário web reativas com Python.
-- **Google Sheets:** Usado como banco de dados para armazenar as perguntas e respostas do quiz, tornando a atualização do conteúdo simples e prática.
+## Tecnologias Utilizadas:
+
+- **Python:** A linguagem de programação principal, escolhida por sua clareza e expressividade.
+- **Flet:** Um framework moderno que permite criar interfaces de usuário web reativas e atraentes usando apenas Python, simplificando o desenvolvimento.
+- **Google Sheets:** Usado como banco de dados flexível para armazenar as perguntas e respostas do quiz, tornando a atualização do conteúdo fácil e acessível.
 
 ## Tela Inicial:
 
-A tela inicial do aplicativo foi projetada para ser convidativa e informativa, exibindo:
+A tela inicial do aplicativo já está implementada, proporcionando uma recepção agradável e intuitiva aos usuários. Ela conta com:
 
-- Um ícone do Scrum, representando a metodologia ágil utilizada no desenvolvimento do projeto.
-- Um botão "Iniciar Quiz" para dar início à experiência interativa.
-- Um botão "Fechar" para permitir o encerramento da aplicação a qualquer momento.
+- Um ícone do Scrum, que simboliza a metodologia ágil empregada no desenvolvimento do projeto, priorizando iterações rápidas e eficientes.
+- Um botão "Iniciar Quiz", claro e convidativo, pronto para conduzir os usuários à experiência interativa do quiz.
+- Um botão "Fechar", oferecendo a flexibilidade de sair do aplicativo a qualquer momento.
 
 ## Funcionalidades:
 
-### A Fazer:
+### Em Desenvolvimento Ativo:
 
-- [ ] **Preencher a planilha com todas as perguntas:** Completar o banco de dados de perguntas no Google Sheets para garantir um quiz abrangente e desafiador.
-- [ ] **Carregamento de 30 perguntas aleatórias do Google Sheets:** Implementar a funcionalidade para selecionar aleatoriamente 30 perguntas da planilha, garantindo uma experiência diferente a cada tentativa.
-- [ ] **Quatro opções de resposta para cada pergunta:** Apresentar aos usuários quatro opções de resposta para cada pergunta, aumentando o desafio e testando o conhecimento de forma eficaz.
-- [ ] **Temporizador de 1 hora para completar o quiz:** Adicionar um cronômetro de 1 hora para aumentar a pressão e simular um ambiente de teste real.
-- [ ] **Feedback sobre a resposta escolhida (correta ou incorreta):** Fornecer feedback visual imediato sobre a resposta selecionada, permitindo que os usuários aprendam com seus erros e acompanhem seu progresso.
-- [ ] **Pontuação final e resultado (aprovado ou reprovado):** Calcular e exibir a pontuação final do usuário, juntamente com uma mensagem indicando se ele foi aprovado ou reprovado no quiz, com base em um critério predefinido.
+- **Funcionalidades Essenciais do Quiz:**
+    - Carregamento de 30 perguntas aleatórias do Google Sheets para garantir uma experiência variada a cada tentativa.
+    - Apresentação de quatro opções de resposta para cada pergunta, desafiando o conhecimento dos usuários de forma eficaz.
+    - Implementação de um temporizador de 1 hora para criar uma atmosfera de desafio e simular um ambiente de teste real.
+    - Feedback imediato sobre a resposta escolhida, informando se está correta ou incorreta, e permitindo que os usuários aprendam durante o processo.
+    - Cálculo e exibição da pontuação final, acompanhada de uma mensagem clara de aprovação ou reprovação, motivando os usuários a melhorar seu desempenho.
 
-### Feitas:
+### Funcionalidades Implementadas:
 
-- [x] **Cria funções referente a lógica do app:** A lógica principal do quiz, como o controle das perguntas, respostas, temporizador e pontuação, foi implementada com sucesso.
-- [x] **Tela inicial com ícone do Scrum, botão "Iniciar" e "Fechar":** A interface da tela inicial foi desenvolvida e estilizada, proporcionando uma experiência inicial agradável ao usuário.
-- [x] **Estrutura de código organizada em múltiplos arquivos:** O código-fonte foi organizado em múltiplos arquivos, cada um com sua responsabilidade específica, facilitando a manutenção e a evolução do projeto. 
+- **Base Sólida:**
+    - Lógica principal do quiz, incluindo o controle das perguntas, respostas, temporizador e pontuação, fornecendo uma base sólida para o desenvolvimento futuro.
+    - Interface da tela inicial, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
+    - Estrutura de código organizada em múltiplos arquivos, cada um com sua responsabilidade bem definida, facilitando a manutenção e a evolução do projeto. 
+    - Implementação de um sistema de cache offline usando JSON, garantindo que os usuários possam aproveitar o quiz mesmo sem conexão com a internet.
 
 ## Próximos Passos:
 
-- Finalizar a implementação das funcionalidades faltantes, como o carregamento aleatório das perguntas, opções de resposta, temporizador, feedback e resultados.
-- Realizar testes de usabilidade para garantir uma experiência intuitiva e agradável para os usuários.
-- Explorar opções de implantação para disponibilizar o quiz online.
+O desenvolvimento do Quiz App está em ritmo acelerado! Nossos próximos passos incluem:
 
-## Contribuindo:
+- **Finalizar as funcionalidades essenciais do quiz em andamento.**
+- Implementar testes abrangentes para garantir a qualidade do código e a robustez do aplicativo.
+- Realizar testes de usabilidade com usuários reais para coletar feedback e aprimorar a experiência do usuário.
+- Explorar opções de implantação para disponibilizar o quiz online e torná-lo acessível a todos.
 
-Sinta-se à vontade para contribuir com este projeto! Se você tiver sugestões, correções de bugs ou novas funcionalidades em mente, abra uma issue ou envie um pull request.
+## Como Contribuir:
+
+Acreditamos no poder da comunidade e suas contribuições são muito valiosas para nós! Se você quiser participar do desenvolvimento deste projeto, sinta-se à vontade para:
+
+- Explorar o código-fonte e reportar bugs.
+- Propor novas funcionalidades ou melhorias.
+- Criar pull requests com correções ou implementações.
+
+Juntos, podemos tornar este Quiz App ainda mais incrível!
