@@ -46,4 +46,4 @@ def main(page: ft.Page):
 
 
 # Inicia o aplicativo Flet
-ft.app(target=main, view=ft.WEB_BROWSER)
+ft.app(target=main)

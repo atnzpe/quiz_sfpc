@@ -52,32 +52,30 @@ def extract_questions_from_doc(document_id):
             )
 
             if text:
-                # Verifica se o texto está em negrito para identificar a pergunta e a resposta correta
+                # Remove espaços em branco (incluindo quebras de linha) no início e no final da string
+                text = text.strip()
+
+                # Verifica se o texto está em negrito
                 is_bold = "bold" in elements[0].get("textRun").get("textStyle", {})
 
                 if is_bold:
-                    if current_question:
-                        # Adiciona a resposta correta à pergunta atual
-                        current_question.append(correct_answer)
-                        questions.append(current_question)
+                    # Se for uma nova pergunta em negrito
+                    if text[0].isdigit() and text[1] == ".":
+                        if current_question:
+                            current_question.append(correct_answer)
+                            questions.append(current_question)
+                        current_question = [text[2:].strip()]
+                        correct_answer = ""
+                    # Se for a resposta correta em negrito
+                    elif text[0] in ["a", "b", "c", "d"] and text[1] == ")":
+                        correct_answer = text[0]
+                # Se não for negrito, é uma opção de resposta normal
+                elif text[0] in ["a", "b", "c", "d"] and text[1] == ")":
+                    current_question.append(text[2:].strip())
 
-                    # Inicia uma nova pergunta
-                    current_question = [text]
-                    correct_answer = ""
-                elif (
-                    text[0] in ["a", "b", "c", "d"] and text[1] == ")"
-                ):  # Opção de resposta
-                    if is_bold:
-                        correct_answer = text[
-                            0
-                        ]  # Define a resposta correta (letra da opção)
-                    current_question.append(
-                        text[2:].strip()
-                    )  # Adiciona a opção de resposta
-        elif "table" in item:
+        elif "table" in item:  # Ignora tabelas no documento
             continue
 
-    # Adiciona a última pergunta
     if current_question:
         current_question.append(correct_answer)
         questions.append(current_question)
@@ -87,12 +85,49 @@ def extract_questions_from_doc(document_id):
 
 def write_to_spreadsheet(questions, spreadsheet_url):
     """Escreve as perguntas na planilha, evitando duplicatas."""
-    # ... (Função sem alterações)
+    sheet = CLIENT_SHEETS.open_by_url(spreadsheet_url).sheet1
+    existing_questions = sheet.col_values(1)[1:]
+
+    print(
+        "Perguntas existentes na planilha:", existing_questions
+    )  # Depuração: Imprime as perguntas existentes
+
+    new_questions = []
+    for question in questions:
+        if question[0] not in existing_questions:
+            new_questions.append(question)
+        else:
+            print(f"Pergunta duplicada ignorada: {question[0]}")
+
+    if new_questions:
+        sheet.append_rows(new_questions)
+        print(f"{len(new_questions)} novas perguntas adicionadas à planilha.")
+    else:
+        print("Nenhuma nova pergunta encontrada.")
 
 
 def monitor_google_docs(document_id, spreadsheet_url, interval=300):
     """Monitora o Google Docs para alterações e atualiza a planilha."""
-    # ... (Função sem alterações)
+    last_revision_id = None
+    while True:
+        try:
+            service = build("docs", "v1", credentials=CREDS_DOCS)
+            document = service.documents().get(documentId=document_id).execute()
+            current_revision_id = document["revisionId"]
+
+            if current_revision_id != last_revision_id:
+                print("Mudanças detectadas no Google Docs. Atualizando a planilha...")
+                questions = extract_questions_from_doc(document_id)
+                print(
+                    "Perguntas extraídas do Google Docs:", questions
+                )  # Depuração: Imprime as perguntas extraídas
+                write_to_spreadsheet(questions, spreadsheet_url)
+                last_revision_id = current_revision_id
+
+            time.sleep(interval)  # Aguarda o intervalo especificado
+        except Exception as e:
+            print(f"Erro ao monitorar o Google Docs: {e}")
+            time.sleep(60)  # Aguarda 1 minuto antes de tentar novamente
 
 
 if __name__ == "__main__":
