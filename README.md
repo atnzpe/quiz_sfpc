@@ -38,6 +38,59 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
     - Integração com Google Docs para carregar perguntas, automatizando o processo de atualização do quiz a partir de um documento centralizado.
     - Monitoramento contínuo do Google Docs para atualização automática, garantindo que o quiz esteja sempre atualizado com as últimas perguntas.
 
+## Configuração das Credenciais do Google Cloud:
+
+**Para usar este aplicativo, você precisará configurar credenciais do Google Cloud para acessar o Google Sheets e o Google Docs. Siga estas etapas:**
+
+1. **Criar um projeto no Google Cloud Platform:**
+   - Acesse o Google Cloud Console: [https://console.cloud.google.com/](https://console.cloud.google.com/)
+   - Crie um novo projeto ou selecione um existente.
+
+2. **Ativar as APIs necessárias:**
+   - **Google Sheets API:**
+     - Na barra de pesquisa, digite "Google Sheets API" e ative a API.
+   - **Google Docs API:**
+     - Na barra de pesquisa, digite "Google Docs API" e ative a API.
+
+3. **Criar uma conta de serviço:**
+   - No menu à esquerda, vá para "IAM e administração" -> "Contas de serviço".
+   - Clique em "Criar conta de serviço".
+   - Dê um nome à conta de serviço (ex: "quiz-app-sheets-service" para o Google Sheets e "quiz-app-docs-service" para o Google Docs).
+   - Deixe as opções padrão para a função.
+   - Clique em "Criar e continuar" e depois em "Concluído".
+
+4. **Gerar chaves JSON:**
+   - Na lista de contas de serviço, localize a conta que você acabou de criar e clique nos três pontos à direita.
+   - Selecione "Gerenciar chaves".
+   - Clique em "Adicionar chave" -> "Criar nova chave".
+   - Escolha o tipo de chave "JSON" e clique em "Criar".
+   - Um arquivo JSON será baixado. 
+     - Renomeie o arquivo para **`credentials.json`** para a conta de serviço do Google Sheets.
+     - Renomeie o arquivo para **`credentials_docs.json`** para a conta de serviço do Google Docs.
+   - Mova os arquivos JSON para o diretório do seu projeto.
+
+5. **Conceder permissões:**
+   - **Google Sheets:**
+     - Abra a planilha do Google Sheets.
+     - Clique em "Compartilhar".
+     - Adicione o endereço de e-mail da conta de serviço do Google Sheets com a permissão "Editor".
+   - **Google Docs:**
+     - Abra o documento do Google Docs.
+     - Clique em "Compartilhar".
+     - Adicione o endereço de e-mail da conta de serviço do Google Docs com a permissão "Leitor".
+
+## Execução do Aplicativo:
+
+1. **Instale as dependências:** `pip install -r requirements.txt`
+2. **Execute o aplicativo:** `flet run`
+   - O aplicativo iniciará e o monitoramento do Google Docs será executado em segundo plano automaticamente.
+
+## Formato das Perguntas no Google Docs:
+
+- As perguntas devem estar numeradas (ex: 1., 2., 3., etc.).
+- A pergunta em si e a resposta correta devem estar formatadas em **negrito**.
+- As opções de resposta devem ser formatadas com letras (a), b), c), d)).
+
 ## Próximos Passos:
 
 O desenvolvimento do Quiz App está em ritmo acelerado! Nossos próximos passos incluem:
