@@ -8,8 +8,10 @@ import traceback
 
 # Caminhos para os arquivos de credenciais, utilizando caminhos absolutos
 # para evitar problemas com diretórios relativos.
-SHEETS_CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), 'credentials_sheets.json')
-DOCS_CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), 'credentials_docs.json')
+SHEETS_CREDENTIALS_FILE = os.path.join(
+    os.path.dirname(__file__), "credentials_sheets.json"
+)
+DOCS_CREDENTIALS_FILE = os.path.join(os.path.dirname(__file__), "credentials_docs.json")
 
 # Escopos de acesso necessários para o Google Sheets e Google Docs.
 SHEETS_SCOPES = [
@@ -28,6 +30,7 @@ DOCUMENT_ID = "1kQU6ElV41Y73Iiu6N1lOcfAoHaaWSNTqmOnOWBhifgg"
 # Intervalo de verificação para alterações no Google Docs (em segundos).
 MONITORING_INTERVAL = 300
 
+
 def extract_questions_from_doc(document_id):
     """
     Extrai perguntas e respostas de um documento do Google Docs.
@@ -36,7 +39,7 @@ def extract_questions_from_doc(document_id):
         document_id: O ID do documento do Google Docs.
 
     Returns:
-        Uma lista de listas, onde cada sublista representa uma pergunta 
+        Uma lista de listas, onde cada sublista representa uma pergunta
         e suas opções de resposta, com a resposta correta no final, ou None em caso de erro.
     """
     try:
@@ -69,10 +72,10 @@ def extract_questions_from_doc(document_id):
                     continue
 
                 # Identifica opções de resposta pelo formato "(a) ...".
-                if len(text) > 2 and text[0].islower() and text[1] == ')':
+                if len(text) > 2 and text[0].islower() and text[1] == ")":
                     current_question.append(text[2:].strip())
                     # A resposta correta está em negrito.
-                    if 'bold' in elements[0].get('textRun', {}).get('textStyle', {}):
+                    if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
                         correct_answer = text[0]
                 else:
                     # Se não for uma opção, é uma nova pergunta.
@@ -116,7 +119,7 @@ def write_to_spreadsheet(questions, spreadsheet_url):
         existing_questions = sheet.col_values(1)[1:]  # Ignora o cabeçalho
 
         new_questions = []
-        # Verifica se há novas perguntas a serem adicionadas, 
+        # Verifica se há novas perguntas a serem adicionadas,
         # evitando duplicatas.
         for question in questions:
             question_text = question[0].replace("<b>", "").replace("</b>", "")
@@ -198,6 +201,7 @@ def monitor_google_docs(document_id, spreadsheet_url, interval=MONITORING_INTERV
             traceback.print_exc()
             # Aguarda 1 minuto antes de tentar novamente em caso de erro.
             time.sleep(60)
+
 
 if __name__ == "__main__":
     monitor_google_docs(DOCUMENT_ID, SPREADSHEET_URL)
