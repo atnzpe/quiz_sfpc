@@ -6,9 +6,11 @@ Este é um aplicativo de quiz interativo em desenvolvimento que visa proporciona
 
 A tela inicial do aplicativo já está implementada, proporcionando uma recepção agradável e intuitiva aos usuários. Ela conta com:
 
-- Um ícone do Scrum, que simboliza a metodologia ágil empregada no desenvolvimento do projeto, priorizando iterações rápidas e eficientes.
-- Um botão "Iniciar Quiz", claro e convidativo, pronto para conduzir os usuários à experiência interativa do quiz.
+- Um título centralizado "Quiz - SFPC™".
+- Um ícone da CertiProf, simbolizando a certificação alvo do quiz.
+- Um botão "Iniciar Quiz", pronto para conduzir os usuários à experiência interativa do quiz.
 - Um botão "Fechar", oferecendo a flexibilidade de sair do aplicativo a qualquer momento.
+- Um botão "Certificação agora!", que leva o usuário ao site da CertiProf para mais informações sobre a certificação.
 
 ## Funcionalidades:
 
@@ -24,12 +26,13 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 
 - **Base Sólida:**
     - Lógica principal do quiz, incluindo o controle das perguntas, respostas, temporizador e pontuação, fornecendo uma base sólida para o desenvolvimento futuro.
-    - Interface da tela inicial, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
+    - Interface da tela inicial com elementos centralizados e botões com tamanho otimizado, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
     - Estrutura de código organizada com o padrão MVC (Model-View-Controller), facilitando a manutenção e a evolução do projeto. 
     - Implementação de um sistema de cache offline usando JSON, garantindo que os usuários possam aproveitar o quiz mesmo sem conexão com a internet.
     - Integração com Google Sheets para carregar perguntas, permitindo que o conteúdo do quiz seja gerenciado de forma externa e fácil.
     - Integração com Google Docs para carregar perguntas, automatizando o processo de atualização do quiz a partir de um documento centralizado.
     - Monitoramento contínuo do Google Docs para atualização automática, garantindo que o quiz esteja sempre atualizado com as últimas perguntas.
+    - Seletor de tema claro/escuro, permitindo que o usuário personalize a aparência do aplicativo de acordo com suas preferências.
 
 ## Configuração das Credenciais do Google Cloud:
 
@@ -59,7 +62,7 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
    - Escolha o tipo de chave "JSON" e clique em "Criar".
    - Um arquivo JSON será baixado para cada conta de serviço. 
      - Renomeie os arquivos para **`credentials_sheets.json`** (para a conta de serviço do Google Sheets) e **`credentials_docs.json`** (para a conta de serviço do Google Docs).
-   - Mova os arquivos JSON para o diretório do seu projeto.
+   - Mova os arquivos JSON para o diretório do seu projeto. **Atenção:** Nunca faça commit desses arquivos no seu repositório Git!
 
 5. **Conceder permissões às contas de serviço:**
    - **Google Sheets:**
@@ -75,7 +78,8 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 
 1. **Certifique-se de ter o Flet versão 0.23.0 ou superior instalado.** 
 2. **Instale as dependências:** `pip install -r requirements.txt`
-3. **Execute o aplicativo:** `flet run`
+3. **Configure as variáveis de ambiente para os caminhos dos arquivos de credenciais (`credentials_sheets.json` e `credentials_docs.json`).**
+4. **Execute o aplicativo:** `flet run`
    - O aplicativo iniciará e o monitoramento do Google Docs será executado em segundo plano automaticamente.
 
 ## Formato das Perguntas no Google Docs:
