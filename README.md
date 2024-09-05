@@ -1,6 +1,6 @@
-# Quiz App com Python, Flet e Google Sheets
+# Quiz App com Python, Flet e Google Sheets - Preparatório para a SFPC™
 
-Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos sobre Quiz preparatorio para o Scrum Foundation Professional Certification - SFPC™. Vamos ou Bora?!
+Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos em preparação para a Scrum Foundation Professional Certification (SFPC™). Vamos ou Bora?! 🚀
 
 ## Tela Inicial:
 
@@ -9,7 +9,6 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 - Um ícone do Scrum, que simboliza a metodologia ágil empregada no desenvolvimento do projeto, priorizando iterações rápidas e eficientes.
 - Um botão "Iniciar Quiz", claro e convidativo, pronto para conduzir os usuários à experiência interativa do quiz.
 - Um botão "Fechar", oferecendo a flexibilidade de sair do aplicativo a qualquer momento.
-
 
 ## Funcionalidades:
 
@@ -26,7 +25,7 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 - **Base Sólida:**
     - Lógica principal do quiz, incluindo o controle das perguntas, respostas, temporizador e pontuação, fornecendo uma base sólida para o desenvolvimento futuro.
     - Interface da tela inicial, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
-    - Estrutura de código organizada em múltiplos arquivos, cada um com sua responsabilidade bem definida, facilitando a manutenção e a evolução do projeto. 
+    - Estrutura de código organizada com o padrão MVC (Model-View-Controller), facilitando a manutenção e a evolução do projeto. 
     - Implementação de um sistema de cache offline usando JSON, garantindo que os usuários possam aproveitar o quiz mesmo sem conexão com a internet.
     - Integração com Google Sheets para carregar perguntas, permitindo que o conteúdo do quiz seja gerenciado de forma externa e fácil.
     - Integração com Google Docs para carregar perguntas, automatizando o processo de atualização do quiz a partir de um documento centralizado.
@@ -46,37 +45,37 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
    - **Google Docs API:**
      - Na barra de pesquisa, digite "Google Docs API" e ative a API.
 
-3. **Criar uma conta de serviço:**
+3. **Criar duas contas de serviço, uma para o Google Sheets e outra para o Google Docs:**
    - No menu à esquerda, vá para "IAM e administração" -> "Contas de serviço".
    - Clique em "Criar conta de serviço".
    - Dê um nome à conta de serviço (ex: "quiz-app-sheets-service" para o Google Sheets e "quiz-app-docs-service" para o Google Docs).
    - Deixe as opções padrão para a função.
    - Clique em "Criar e continuar" e depois em "Concluído".
 
-4. **Gerar chaves JSON:**
-   - Na lista de contas de serviço, localize a conta que você acabou de criar e clique nos três pontos à direita.
+4. **Gerar chaves JSON para cada conta de serviço:**
+   - Na lista de contas de serviço, localize cada conta que você criou e clique nos três pontos à direita.
    - Selecione "Gerenciar chaves".
    - Clique em "Adicionar chave" -> "Criar nova chave".
    - Escolha o tipo de chave "JSON" e clique em "Criar".
-   - Um arquivo JSON será baixado. 
-     - Renomeie o arquivo para **`credentials.json`** para a conta de serviço do Google Sheets.
-     - Renomeie o arquivo para **`credentials_docs.json`** para a conta de serviço do Google Docs.
+   - Um arquivo JSON será baixado para cada conta de serviço. 
+     - Renomeie os arquivos para **`credentials_sheets.json`** (para a conta de serviço do Google Sheets) e **`credentials_docs.json`** (para a conta de serviço do Google Docs).
    - Mova os arquivos JSON para o diretório do seu projeto.
 
-5. **Conceder permissões:**
+5. **Conceder permissões às contas de serviço:**
    - **Google Sheets:**
      - Abra a planilha do Google Sheets.
      - Clique em "Compartilhar".
-     - Adicione o endereço de e-mail da conta de serviço do Google Sheets com a permissão "Editor".
+     - Adicione o endereço de e-mail da conta de serviço do Google Sheets (`quiz-app-sheets-service`) com a permissão "Editor".
    - **Google Docs:**
      - Abra o documento do Google Docs.
      - Clique em "Compartilhar".
-     - Adicione o endereço de e-mail da conta de serviço do Google Docs com a permissão "Leitor".
+     - Adicione o endereço de e-mail da conta de serviço do Google Docs (`quiz-app-docs-service`) com a permissão "Leitor".
 
 ## Execução do Aplicativo:
 
-1. **Instale as dependências:** `pip install -r requirements.txt`
-2. **Execute o aplicativo:** `flet run`
+1. **Certifique-se de ter o Flet versão 0.23.0 ou superior instalado.** 
+2. **Instale as dependências:** `pip install -r requirements.txt`
+3. **Execute o aplicativo:** `flet run`
    - O aplicativo iniciará e o monitoramento do Google Docs será executado em segundo plano automaticamente.
 
 ## Formato das Perguntas no Google Docs:
@@ -103,4 +102,3 @@ Acreditamos no poder da comunidade e suas contribuições são muito valiosas pa
 - Criar pull requests com correções ou implementações.
 
 Juntos, podemos tornar este Quiz App ainda mais incrível!
-
