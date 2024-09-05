@@ -1,0 +1,40 @@
+quiz_sfpc>
+
+│   .gitignore
+│   automate_spreadsheet.py
+│   credentials.json
+│   credentials_docs.json
+│   LICENSE
+│   main.py
+│   quiz_cache.json
+│   quiz_logic.py
+│   README.md
+│   requirements.txt
+│   tree_project.txt
+│   ui.py
+│
+├───app
+│   │   controllers.py
+│   │   models.py
+│   │   views.py
+│   │   __init__.py
+│   │
+│   └───__pycache__
+│           controllers.cpython-312.pyc
+│           models.cpython-312.pyc
+│           views.cpython-312.pyc
+│           __init__.cpython-312.pyc
+│
+├───bkp
+│       __automate_spreadsheet.txt
+│       __credentials.txt
+│       __credentials_docs.txt
+│       __main.txt
+│       __quiz_logic.txt
+│       __README.txt
+│       __ui.txt
+│
+└───__pycache__
+        automate_spreadsheet.cpython-312.pyc
+        quiz_logic.cpython-312.pyc
+        ui.cpython-312.pyc

@@ -1,7 +1,7 @@
 # app/views.py
 
 import flet as ft  # Importa a biblioteca Flet para a interface do usuário
-from models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
+from .models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
 
 
 def exibir_tela_inicial(page: ft.Page, controller):

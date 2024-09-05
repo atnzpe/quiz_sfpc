@@ -2,7 +2,7 @@
 import flet as ft
 from .models import Pergunta, EstadoQuiz  # Importa as classes do modelo
 from quiz_logic import QuizLogic  # Importa a lógica do quiz
-from views import (
+from .views import (
     exibir_tela_inicial,
     exibir_pergunta,
     exibir_resultados,
