@@ -2,6 +2,7 @@
 
 import flet as ft  # Importa a biblioteca Flet para a interface do usuário
 from .models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
+import threading
 
 
 def exibir_tela_inicial(page: ft.Page, controller):
@@ -57,35 +58,26 @@ def exibir_tela_inicial(page: ft.Page, controller):
 def exibir_pergunta(
     page: ft.Page, pergunta: Pergunta, estado_quiz: EstadoQuiz, controller
 ):
-    """
-    Exibe a pergunta atual do quiz, opções de resposta e um botão para voltar ao início.
+    """Exibe a pergunta atual do quiz."""
 
-    Args:
-        page (ft.Page): A página do Flet para exibir a interface.
-        pergunta (Pergunta): A pergunta atual a ser exibida.
-        estado_quiz (EstadoQuiz): O estado atual do quiz.
-        controller: Referência ao controlador do quiz para lidar com eventos.
-    """
-
-    page.clean()  # Limpa a página antes de exibir a pergunta
+    page.clean()
     question_text = ft.Text(
         f"{estado_quiz.pergunta_atual + 1}. {pergunta.enunciado}", size=20
     )
-    answer_buttons = []  # Lista para armazenar os botões de resposta
+    answer_buttons = []
 
-    # Cria os botões de resposta dinamicamente
     for i, opcao in enumerate(pergunta.opcoes):
         button = ft.ElevatedButton(
             text=opcao, on_click=controller.verificar_resposta, data=i
         )
         answer_buttons.append(button)
 
+    # Cria o Text para exibir o tempo
     score_text = ft.Text(
         f"Tempo restante: {estado_quiz.tempo_restante // 60:02d}:{estado_quiz.tempo_restante % 60:02d}",
         size=16,
     )
 
-    # Adiciona os elementos à página em uma coluna centralizada
     page.add(
         ft.Column(
             [
@@ -100,6 +92,24 @@ def exibir_pergunta(
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
+
+    def atualizar_tempo():
+        """Atualiza o tempo restante a cada segundo."""
+        if estado_quiz.tempo_restante > 0 and estado_quiz.quiz_iniciado:
+            estado_quiz.tempo_restante -= 1
+            horas, resto = divmod(estado_quiz.tempo_restante, 3600)
+            minutos, segundos = divmod(resto, 60)
+            score_text.value = (
+                f"Tempo restante: {horas:02d}:{minutos:02d}:{segundos:02d}"
+            )
+            page.update()
+            # Agenda a próxima atualização em 1 segundo
+            page.on_idle = lambda _: threading.Timer(1, atualizar_tempo).start()
+        else:
+            controller.finalizar_quiz(None)  # Finaliza o quiz se o tempo acabar
+
+    # Inicia a atualização do tempo
+    atualizar_tempo()
 
 
 def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
