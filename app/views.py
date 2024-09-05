@@ -9,7 +9,7 @@ import threading
 # Inicialize o mixer do Pygame
 pygame.mixer.init()
 
-# Função para reproduzir um áudio aleatório de uma pasta
+# Função para reproduzir um áudio aleatório de uma pasta dentro da pasta audio
 def reproduzir_audio(pasta):
     """Reproduz um áudio aleatório da pasta especificada."""
     caminho_pasta = os.path.join(os.path.dirname(__file__), 'audio', pasta)  # Caminho relativo
