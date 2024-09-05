@@ -1,6 +1,6 @@
 # Quiz App com Python, Flet e Google Sheets
 
-Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos sobre Quiz preparatorio para o Scrum Foundation Professional Certification - SFPC™.
+Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos sobre Quiz preparatorio para o Scrum Foundation Professional Certification - SFPC™. Vamos ou Bora?!
 
 ## Tela Inicial:
 
