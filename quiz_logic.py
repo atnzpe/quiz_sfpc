@@ -23,9 +23,9 @@ class QuizLogic:
             "https://www.googleapis.com/auth/drive",
         ]
 
-        # Carrega as credenciais da conta de serviço
+        # Carrega as credenciais da conta de serviço do arquivo 'credentials_sheets.json' 
         self.creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "credentials.json", self.scope
+            "credentials_sheets.json", self.scope # Nome do arquivo corrigido
         )
         self.client = gspread.authorize(self.creds)
 
