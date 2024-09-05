@@ -1,18 +1,33 @@
 # app/views.py
+import flet as ft
+from .models import Pergunta, EstadoQuiz
+import random
+import pygame  # Importe o pygame
+import os
 
-import flet as ft  # Importa a biblioteca Flet para a interface do usuário
-from .models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
-import threading
+# Inicialize o mixer do Pygame
+pygame.mixer.init()
+
+# Função para reproduzir um áudio aleatório de uma pasta
+def reproduzir_audio(pasta):
+    """Reproduz um áudio aleatório da pasta especificada."""
+    arquivos_de_audio = [
+        f for f in os.listdir(pasta) if f.endswith(".mp3") or f.endswith(".wav")
+    ]
+    if arquivos_de_audio:
+        audio_aleatorio = random.choice(arquivos_de_audio)
+        caminho_do_audio = os.path.join(pasta, audio_aleatorio)
+        pygame.mixer.music.load(caminho_do_audio)  # Carrega o áudio
+        pygame.mixer.music.play()  # Reproduz o áudio
 
 
 def exibir_tela_inicial(page: ft.Page, controller):
-    """
-    Exibe a tela inicial do quiz.
-    """
+    """Exibe a tela inicial do quiz."""
+    reproduzir_audio("inicio")  # Reproduz um áudio aleatório da pasta "inicio"
 
-    # Centraliza o título usando um Container com alinhamento centralizado
     titulo = ft.Container(
-        ft.Text("Quiz - SFPC™", size=24, weight="bold"), alignment=ft.alignment.center
+        ft.Text("Quiz - SFPC™", size=24, weight="bold"),
+        alignment=ft.alignment.center,
     )
 
     scrum_icon = ft.Image(
@@ -21,7 +36,6 @@ def exibir_tela_inicial(page: ft.Page, controller):
         height=100,
     )
 
-    # Botões com tamanho aumentado
     button_start = ft.ElevatedButton(
         "Iniciar Quiz", on_click=controller.iniciar_quiz, width=200, height=50
     )
@@ -29,7 +43,6 @@ def exibir_tela_inicial(page: ft.Page, controller):
         "Fechar", on_click=lambda _: page.window.close(), width=200, height=50
     )
 
-    # Botão "Certificação agora!" com link externo
     button_certificacao = ft.ElevatedButton(
         "Certificação agora!",
         on_click=lambda _: page.launch_url(
@@ -39,7 +52,6 @@ def exibir_tela_inicial(page: ft.Page, controller):
         height=50,
     )
 
-    # Adiciona os elementos à página em uma coluna centralizada
     page.add(
         ft.Column(
             [
@@ -77,6 +89,9 @@ def exibir_pergunta(
         f"Tempo restante: {estado_quiz.tempo_restante // 60:02d}:{estado_quiz.tempo_restante % 60:02d}",
         size=16,
     )
+    controller.texto_tempo = (
+        score_text  # Define a referencia do texto_tempo no Controller
+    )
 
     page.add(
         ft.Column(
@@ -106,6 +121,9 @@ def exibir_pergunta(
             # Agenda a próxima atualização em 1 segundo
             page.on_idle = lambda _: threading.Timer(1, atualizar_tempo).start()
         else:
+            reproduzir_audio(
+                "acabar"
+            )  # Reproduz áudio da pasta "acabar" quando o tempo acabar
             controller.finalizar_quiz(None)  # Finaliza o quiz se o tempo acabar
 
     # Inicia a atualização do tempo
@@ -113,14 +131,7 @@ def exibir_pergunta(
 
 
 def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
-    """
-    Exibe os resultados do quiz em um diálogo modal.
-
-    Args:
-        page (ft.Page): A página do Flet para exibir o diálogo.
-        estado_quiz (EstadoQuiz): O estado final do quiz.
-        controller: Referência ao controlador do quiz (não usado aqui, mas mantido para consistência).
-    """
+    """Exibe os resultados do quiz."""
 
     def close_dlg(e):
         """Fecha o diálogo modal."""
@@ -144,3 +155,9 @@ def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
     page.dialog = dlg_modal
     dlg_modal.open = True
     page.update()
+
+    if estado_quiz.pontuacao >= 70:
+        reproduzir_audio("ganhou")  # Reproduz áudio da pasta "ganhou" se aprovado
+    else:
+        reproduzir_audio("perdeu")  # Reproduz áudio da pasta "perdeu" se reprovado
+
