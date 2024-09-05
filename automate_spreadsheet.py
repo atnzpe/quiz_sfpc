@@ -31,6 +31,7 @@ def extract_questions_from_doc(document_id):
     Extrai perguntas e respostas de um documento do Google Docs,
     iterando sobre cada elemento do documento e identificando as opções
     de resposta com base em seu formato (letra minúscula seguida de parêntese).
+    Ignora parágrafos vazios.
 
     Args:
         document_id: O ID do documento do Google Docs.
@@ -47,22 +48,26 @@ def extract_questions_from_doc(document_id):
     content = document.get("body").get("content")
 
     questions = []
-    current_question = []  
+    current_question = []
     correct_answer = ""
 
     for item in content:
-        if "paragraph" in item:  # Verifica se o item é um parágrafo
+        if "paragraph" in item:
             elements = item.get("paragraph").get("elements")
             text = ""
-            for element in elements:  # Itera sobre os elementos dentro do parágrafo
+            for element in elements:
                 if "textRun" in element:
                     text += element["textRun"]["content"]
             text = text.strip()
 
+            # Ignora parágrafos vazios
+            if not text:
+                continue
+
             # Verifica se o texto corresponde ao formato de uma opção de resposta:
-            if len(text) > 2 and text[0].islower() and text[1] == ')':  
+            if len(text) > 2 and text[0].islower() and text[1] == ")":
                 current_question.append(text[2:].strip())
-                if 'bold' in elements[0].get('textRun', {}).get('textStyle', {}):
+                if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
                     correct_answer = text[0]
             else:
                 # Se não for uma opção, é uma nova pergunta
@@ -79,13 +84,14 @@ def extract_questions_from_doc(document_id):
 
     return questions
 
+
 def write_to_spreadsheet(questions, spreadsheet_url):
     """
     Escreve as perguntas na planilha, evitando duplicatas e formatando
     cada pergunta em uma linha separada, com cada elemento da pergunta
     em uma coluna diferente. Preenche as opções de resposta faltantes
     com strings vazias. Exibe uma mensagem de aviso para perguntas
-    com menos de 4 opções. 
+    com menos de 4 opções.
     Aplica formatação em negrito à coluna "Pergunta" e à opção correta.
     Remove a tag <b> da coluna "Opção 2".
 
@@ -111,20 +117,24 @@ def write_to_spreadsheet(questions, spreadsheet_url):
         for question in new_questions:
             # Verifica se a pergunta tem pelo menos 4 opções de resposta
             if len(question) < 5:
-                print(f"Aviso: A pergunta '{question[0]}' tem menos de 4 opções de resposta. Verifique o Google Docs.")
+                print(
+                    f"Aviso: A pergunta '{question[0]}' tem menos de 4 opções de resposta. Verifique o Google Docs."
+                )
+
+            # Remove todas as tags <b> e </b> antes da formatação
+            for i in range(len(question)):
+                question[i] = question[i].replace("<b>", "").replace("</b>", "")
 
             # Formata a pergunta em negrito
             question[0] = f"<b>{question[0]}</b>"
 
             # Formata a opção correta em negrito (apenas na pergunta atual)
-            if len(question) == 6 and question[5] in ['a', 'b', 'c', 'd']:
-                correct_option_index = ord(question[5]) - ord('a') + 1
+            if len(question) == 6 and question[5] in ["a", "b", "c", "d"]:
+                correct_option_index = ord(question[5]) - ord("a") + 1
                 if 1 <= correct_option_index <= 4:
-                    question[correct_option_index] = f"<b>{question[correct_option_index]}</b>" 
-
-            # Remove a tag <b> da coluna "Opção 2"
-            if len(question) > 2:
-                question[2] = question[2].replace("<b>", "").replace("</b>", "")
+                    question[correct_option_index] = (
+                        f"<b>{question[correct_option_index]}</b>"
+                    )
 
             # Preenche as opções de resposta faltantes com strings vazias
             while len(question) < 6:
