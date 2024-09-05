@@ -31,12 +31,13 @@ class QuizUI:
         # Define os elementos da interface do usuário
         self.question_text = Text(size=20, visible=False)
         self.answer_buttons = []
-        for _ in range(4):
-            button = ElevatedButton(on_click=self.check_answer, visible=False)
+        for i in range(4):
+            # Cria botões de resposta com texto padrão "Opção {i+1}"
+            button = ElevatedButton(text=f"Opção {i+1}", on_click=self.check_answer, visible=False) 
             self.answer_buttons.append(button)
         self.feedback_text = Text("", visible=False)
         self.score_text = Text(f"Tempo restante: 1:00:00", size=16, visible=False)
-        self.time_remaining = 3600  # Tempo restante em segundos
+        self.time_remaining = 3600
 
         # Constrói a interface inicial do aplicativo
         self.build_initial_ui()
