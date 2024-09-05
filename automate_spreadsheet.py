@@ -29,7 +29,8 @@ MONITORING_INTERVAL = 300
 def extract_questions_from_doc(document_id):
     """
     Extrai perguntas e respostas de um documento do Google Docs,
-    levando em consideração as quebras de linha dentro das opções de resposta.
+    iterando sobre cada elemento do documento e identificando as opções
+    de resposta com base em seu formato (letra minúscula seguida de parêntese).
 
     Args:
         document_id: O ID do documento do Google Docs.
@@ -38,58 +39,45 @@ def extract_questions_from_doc(document_id):
         Uma lista de listas, onde cada sublista representa uma pergunta
         e suas opções de resposta, com a resposta correta no final.
     """
-
     credentials = service_account.Credentials.from_service_account_file(
         DOCS_CREDENTIALS_FILE, scopes=DOCS_SCOPES
     )
     service = build("docs", "v1", credentials=credentials)
-
     document = service.documents().get(documentId=document_id).execute()
     content = document.get("body").get("content")
 
     questions = []
-    current_question = None
+    current_question = []  
     correct_answer = ""
 
     for item in content:
-        if "paragraph" in item:
+        if "paragraph" in item:  # Verifica se o item é um parágrafo
             elements = item.get("paragraph").get("elements")
             text = ""
-            for element in elements:
+            for element in elements:  # Itera sobre os elementos dentro do parágrafo
                 if "textRun" in element:
                     text += element["textRun"]["content"]
-
             text = text.strip()
 
-            if text:
-                # Verifica se é uma opção de resposta (formato: "a) ")
-                if len(text) > 2 and text[1] == ")" and text[0] in ['a', 'b', 'c', 'd']:
-                    if current_question is not None:
-                        current_question.append(text[2:].strip())
-                        if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
-                            correct_answer = text[0]
-                else:
-                    # Se não for uma opção, é uma nova pergunta
-                    if current_question is not None:
-                        current_question.append(correct_answer)
-                        questions.append(current_question)
-                    current_question = [text]
-                    correct_answer = ""
-        else:
-            # Se não for um parágrafo, finaliza a pergunta atual
-            if current_question is not None:
-                current_question.append(correct_answer)
-                questions.append(current_question)
-                current_question = None
+            # Verifica se o texto corresponde ao formato de uma opção de resposta:
+            if len(text) > 2 and text[0].islower() and text[1] == ')':  
+                current_question.append(text[2:].strip())
+                if 'bold' in elements[0].get('textRun', {}).get('textStyle', {}):
+                    correct_answer = text[0]
+            else:
+                # Se não for uma opção, é uma nova pergunta
+                if current_question:
+                    current_question.append(correct_answer)
+                    questions.append(current_question)
+                current_question = [text]
                 correct_answer = ""
 
     # Adiciona a última pergunta, se houver
-    if current_question is not None:
+    if current_question:
         current_question.append(correct_answer)
         questions.append(current_question)
 
     return questions
-
 
 def write_to_spreadsheet(questions, spreadsheet_url):
     """
@@ -97,8 +85,9 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     cada pergunta em uma linha separada, com cada elemento da pergunta
     em uma coluna diferente. Preenche as opções de resposta faltantes
     com strings vazias. Exibe uma mensagem de aviso para perguntas
-    com menos de 4 opções.
-    Aplica formatação em negrito à coluna "Pergunta" e à coluna que contém a resposta correta.
+    com menos de 4 opções. 
+    Aplica formatação em negrito à coluna "Pergunta" e à opção correta.
+    Remove a tag <b> da coluna "Opção 2".
 
     Args:
         questions: Uma lista de listas representando as perguntas e respostas.
@@ -127,14 +116,18 @@ def write_to_spreadsheet(questions, spreadsheet_url):
             # Formata a pergunta em negrito
             question[0] = f"<b>{question[0]}</b>"
 
-            # Formata a opção correta em negrito
+            # Formata a opção correta em negrito (apenas na pergunta atual)
             if len(question) == 6 and question[5] in ['a', 'b', 'c', 'd']:
-                correct_option_index = ord(question[5]) - ord('a') + 1  # Calcula o índice da opção correta (1 para 'a', 2 para 'b', etc.)
+                correct_option_index = ord(question[5]) - ord('a') + 1
                 if 1 <= correct_option_index <= 4:
-                    question[correct_option_index] = f"<b>{question[correct_option_index]}</b>"
+                    question[correct_option_index] = f"<b>{question[correct_option_index]}</b>" 
+
+            # Remove a tag <b> da coluna "Opção 2"
+            if len(question) > 2:
+                question[2] = question[2].replace("<b>", "").replace("</b>", "")
 
             # Preenche as opções de resposta faltantes com strings vazias
-            while len(question) < 6:  # Garante que a pergunta tenha 6 elementos (pergunta + 4 opções + resposta)
+            while len(question) < 6:
                 question.append("")
 
             formatted_questions.append(question)
