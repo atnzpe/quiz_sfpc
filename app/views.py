@@ -19,7 +19,7 @@ def exibir_tela_inicial(page: ft.Page, controller):
         height=100,
     )
     button_start = ft.ElevatedButton("Iniciar Quiz", on_click=controller.iniciar_quiz)
-    button_close = ft.ElevatedButton("Fechar", on_click=lambda _: page.window_close())
+    button_close = ft.ElevatedButton("Fechar", on_click=lambda _: page.window.close())
 
     # Adiciona os elementos à página em uma coluna centralizada
     page.add(
