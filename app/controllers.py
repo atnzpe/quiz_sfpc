@@ -25,11 +25,11 @@ class QuizController:
         self.quiz_logic = QuizLogic()  # Cria uma instância da lógica do quiz
         self.exibir_tela_inicial()  # Exibe a tela inicial ao iniciar
 
-    def exibir_tela_inicial(self):
+    def exibir_tela_inicial(self, botao_tema):
         """Exibe a tela inicial do quiz."""
         self.page.clean()  # Limpa a página
-        exibir_tela_inicial(self.page, self)  # Chama a função para exibir a tela inicial
-        self.page.update()  # Atualiza a interface do usuário
+        exibir_tela_inicial(self.page, self, botao_tema)  # Passa o botão de tema para a View
+        self.page.update() 
 
     def iniciar_quiz(self, e):
         """
@@ -98,3 +98,4 @@ class QuizController:
         self.quiz_logic = QuizLogic()  # Reinicia a lógica do quiz (carrega novas perguntas)
         self.exibir_tela_inicial()
 
+    

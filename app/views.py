@@ -4,13 +4,10 @@ import flet as ft  # Importa a biblioteca Flet para a interface do usuário
 from .models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
 
 
-def exibir_tela_inicial(page: ft.Page, controller):
+def exibir_tela_inicial(page: ft.Page, controller, botao_tema):
     """
-    Exibe a tela inicial do quiz com um ícone, botão para iniciar e botão para fechar.
-
-    Args:
-        page (ft.Page): A página do Flet para exibir a interface.
-        controller: Referência ao controlador do quiz para lidar com eventos.
+    Exibe a tela inicial do quiz com um ícone, botão para iniciar, botão para fechar
+    e o botão para alternar o tema.
     """
 
     scrum_icon = ft.Image(
@@ -28,6 +25,7 @@ def exibir_tela_inicial(page: ft.Page, controller):
                 scrum_icon,
                 button_start,
                 button_close,
+                botao_tema  # Adiciona o botão de tema à tela inicial
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
