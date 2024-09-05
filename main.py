@@ -1,5 +1,7 @@
+
 import flet as ft
 from app.controllers import QuizController
+from flet import icons # Importe icons do Flet
 
 def main(page: ft.Page):
     """
