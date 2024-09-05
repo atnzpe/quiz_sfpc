@@ -4,6 +4,7 @@ from .models import Pergunta, EstadoQuiz
 import random
 import pygame  # Importe o pygame
 import os
+import threading
 
 # Inicialize o mixer do Pygame
 pygame.mixer.init()
@@ -11,12 +12,13 @@ pygame.mixer.init()
 # Função para reproduzir um áudio aleatório de uma pasta
 def reproduzir_audio(pasta):
     """Reproduz um áudio aleatório da pasta especificada."""
+    caminho_pasta = os.path.join(os.path.dirname(__file__), 'audio', pasta)  # Caminho relativo
     arquivos_de_audio = [
-        f for f in os.listdir(pasta) if f.endswith(".mp3") or f.endswith(".wav")
+        f for f in os.listdir(caminho_pasta) if f.endswith(".mp3") or f.endswith(".wav")
     ]
     if arquivos_de_audio:
         audio_aleatorio = random.choice(arquivos_de_audio)
-        caminho_do_audio = os.path.join(pasta, audio_aleatorio)
+        caminho_do_audio = os.path.join(caminho_pasta, audio_aleatorio)
         pygame.mixer.music.load(caminho_do_audio)  # Carrega o áudio
         pygame.mixer.music.play()  # Reproduz o áudio
 
