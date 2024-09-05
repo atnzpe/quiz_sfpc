@@ -28,7 +28,8 @@ MONITORING_INTERVAL = 300
 
 def extract_questions_from_doc(document_id):
     """
-    Extrai perguntas e respostas de um documento do Google Docs.
+    Extrai perguntas e respostas de um documento do Google Docs,
+    levando em consideração as quebras de linha dentro das opções de resposta.
 
     Args:
         document_id: O ID do documento do Google Docs.
@@ -47,43 +48,43 @@ def extract_questions_from_doc(document_id):
     content = document.get("body").get("content")
 
     questions = []
-    current_question = []
+    current_question = None
     correct_answer = ""
 
     for item in content:
         if "paragraph" in item:
             elements = item.get("paragraph").get("elements")
-            text = "".join(
-                element.get("textRun", {}).get("content", "").strip()
-                for element in elements
-            )
+            text = ""
+            for element in elements:
+                if "textRun" in element:
+                    text += element["textRun"]["content"]
 
             text = text.strip()
 
-            # Verifica se o parágrafo não está vazio
             if text:
-                # Verifica se o parágrafo começa com uma letra seguida de ')', o que indica uma opção de resposta
+                # Verifica se é uma opção de resposta (formato: "a) ")
                 if len(text) > 2 and text[1] == ")" and text[0] in ['a', 'b', 'c', 'd']:
-                    current_question.append(text[2:].strip())  # Adiciona a opção à pergunta atual
-                    if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
-                        correct_answer = text[0]  # Define a resposta correta se estiver em negrito
+                    if current_question is not None:
+                        current_question.append(text[2:].strip())
+                        if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
+                            correct_answer = text[0]
                 else:
-                    # Se não for uma opção, considera como uma nova pergunta
-                    if current_question:
-                        current_question.append(correct_answer)  # Adiciona a resposta correta à pergunta anterior
+                    # Se não for uma opção, é uma nova pergunta
+                    if current_question is not None:
+                        current_question.append(correct_answer)
                         questions.append(current_question)
-                    current_question = [text]  # Inicia uma nova pergunta
+                    current_question = [text]
                     correct_answer = ""
-            else:
-                # Se o parágrafo estiver vazio, termina a pergunta atual
-                if current_question:
-                    current_question.append(correct_answer)
-                    questions.append(current_question)
-                    current_question = []
-                    correct_answer = ""
+        else:
+            # Se não for um parágrafo, finaliza a pergunta atual
+            if current_question is not None:
+                current_question.append(correct_answer)
+                questions.append(current_question)
+                current_question = None
+                correct_answer = ""
 
-    # Adiciona a última pergunta coletada
-    if current_question:
+    # Adiciona a última pergunta, se houver
+    if current_question is not None:
         current_question.append(correct_answer)
         questions.append(current_question)
 
@@ -94,7 +95,10 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     """
     Escreve as perguntas na planilha, evitando duplicatas e formatando
     cada pergunta em uma linha separada, com cada elemento da pergunta
-    em uma coluna diferente.
+    em uma coluna diferente. Preenche as opções de resposta faltantes
+    com strings vazias. Exibe uma mensagem de aviso para perguntas
+    com menos de 4 opções.
+    Aplica formatação em negrito à coluna "Pergunta" e à coluna que contém a resposta correta.
 
     Args:
         questions: Uma lista de listas representando as perguntas e respostas.
@@ -116,19 +120,29 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     if new_questions:
         formatted_questions = []
         for question in new_questions:
-            # Formata a Opção 2 em negrito
-            question[2] = f"<b>{question[2]}</b>"
+            # Verifica se a pergunta tem pelo menos 4 opções de resposta
+            if len(question) < 5:
+                print(f"Aviso: A pergunta '{question[0]}' tem menos de 4 opções de resposta. Verifique o Google Docs.")
 
-            # Adiciona a resposta correta no final, se presente
-            if len(question) > 5 and question[5] in ["a", "b", "c", "d"]:
-                formatted_questions.append(question[:5] + [question[5]])
-            else:
-                formatted_questions.append(question[:5] + [""])
+            # Formata a pergunta em negrito
+            question[0] = f"<b>{question[0]}</b>"
+
+            # Formata a opção correta em negrito
+            if len(question) == 6 and question[5] in ['a', 'b', 'c', 'd']:
+                correct_option_index = ord(question[5]) - ord('a') + 1  # Calcula o índice da opção correta (1 para 'a', 2 para 'b', etc.)
+                if 1 <= correct_option_index <= 4:
+                    question[correct_option_index] = f"<b>{question[correct_option_index]}</b>"
+
+            # Preenche as opções de resposta faltantes com strings vazias
+            while len(question) < 6:  # Garante que a pergunta tenha 6 elementos (pergunta + 4 opções + resposta)
+                question.append("")
+
+            formatted_questions.append(question)
 
         next_row = len(existing_questions) + 2
         update_range = f"A{next_row}:F{next_row + len(formatted_questions) - 1}"
 
-        # Correção: Usa a ordem correta dos argumentos e argumentos nomeados
+        # Usa a ordem correta dos argumentos e argumentos nomeados
         sheet.update(values=formatted_questions, range_name=update_range)
 
         print(f"{len(formatted_questions)} novas perguntas adicionadas à planilha.")
@@ -158,7 +172,10 @@ def monitor_google_docs(document_id, spreadsheet_url, interval=MONITORING_INTERV
 
             if current_revision_id != last_revision_id:
                 print("Mudanças detectadas no Google Docs. Atualizando a planilha...")
+
+                # Chama a função e atribui o resultado à variável 'questions'
                 questions = extract_questions_from_doc(document_id)
+
                 write_to_spreadsheet(questions, spreadsheet_url)
                 last_revision_id = current_revision_id
 
