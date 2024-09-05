@@ -2,6 +2,15 @@
 
 Este é um aplicativo de quiz interativo em desenvolvimento que visa proporcionar uma experiência desafiadora e engajadora para testar seus conhecimentos em preparação para a Scrum Foundation Professional Certification (SFPC™). Vamos ou Bora?! 🚀
 
+**Detalhes do Exame:**
+
+* **Formato:** Perguntas de múltipla escolha
+* **Perguntas:** 40
+* **Livro aberto:** Não
+* **Idioma:** Inglês / Espanhol / Português (em desenvolvimento)
+* **Pontuação de aprovação:** 32/40 (80%) - Ver.2020
+* **Duração:** 60 minutos
+
 ## Tela Inicial:
 
 A tela inicial do aplicativo já está implementada, proporcionando uma recepção agradável e intuitiva aos usuários. Ela conta com:

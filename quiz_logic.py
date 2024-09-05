@@ -94,7 +94,7 @@ class QuizLogic:
 
     def get_final_results(self):
         """Retorna os resultados finais do quiz, incluindo a pontuação e a mensagem de aprovação/reprovação."""
-        return f"Sua pontuação final: {self.score}\n{'Aprovado!' if self.score >= 70 else 'Reprovado.'}"
+        return f"Sua pontuação final: {self.score}/40\n{'Aprovado!' if self.score >= 32 else 'Reprovado.'}"
 
     def load_questions(self):
         """Carrega as perguntas do cache ou do Google Sheets, dependendo da conectividade."""
@@ -118,8 +118,8 @@ class QuizLogic:
             1:
         ]  # Lê todas as linhas da planilha (exceto o cabeçalho)
         self.questions = random.sample(
-            self.all_questions, 30
-        )  # Seleciona 30 perguntas aleatoriamente
+            self.all_questions, 40
+        )  # Seleciona 40 perguntas aleatoriamente
 
         # Salva as perguntas no cache (arquivo JSON)
         with open(self.cache_file, "w", encoding="utf8") as f:
@@ -130,7 +130,7 @@ class QuizLogic:
         try:
             with open(self.cache_file, "r", encoding="utf8") as f:
                 self.all_questions = json.load(f)
-                self.questions = random.sample(self.all_questions, 30)
+                self.questions = random.sample(self.all_questions, 40)
         except FileNotFoundError:
             # Lida com o caso em que o arquivo de cache não existe
             self.all_questions = []
