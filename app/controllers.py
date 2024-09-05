@@ -1,32 +1,33 @@
 # app/controllers.py
+# app/controllers.py
 import flet as ft
-from .models import Pergunta, EstadoQuiz  # Importa as classes do modelo
-from quiz_logic import QuizLogic  # Importa a lógica do quiz
+from .models import Pergunta, EstadoQuiz  
+from quiz_logic import QuizLogic  
 from .views import (
     exibir_tela_inicial,
     exibir_pergunta,
     exibir_resultados,
-)  # Importa as funções de visualização
-
+)  
 
 class QuizController:
-    def __init__(self, page: ft.Page, botao_tema):  # Recebe o botão de tema
+    """
+    Controla o fluxo do quiz.
+    """
+    def __init__(self, page: ft.Page, switch_tema): # Recebe o switch de tema
         """
         Inicializa o controlador do quiz.
         """
         self.page = page
-        self.botao_tema = botao_tema  # Armazena o botão
+        self.switch_tema = switch_tema # Armazena o switch
         self.estado_quiz = EstadoQuiz()
-        self.quiz_logic = QuizLogic()
+        self.quiz_logic = QuizLogic() 
         self.exibir_tela_inicial()
 
     def exibir_tela_inicial(self):
         """Exibe a tela inicial do quiz."""
-        self.page.clean()
-        exibir_tela_inicial(
-            self.page, self, self.botao_tema
-        )  # Passa o botão para a View
-        self.page.update()
+        self.page.clean()  
+        exibir_tela_inicial(self.page, self)  # Passa o switch para a View
+        self.page.update() 
 
     def iniciar_quiz(self, e):
         """

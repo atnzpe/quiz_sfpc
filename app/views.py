@@ -4,32 +4,55 @@ import flet as ft  # Importa a biblioteca Flet para a interface do usuário
 from .models import Pergunta, EstadoQuiz  # Importa as classes Pergunta e EstadoQuiz
 
 
-def exibir_tela_inicial(page: ft.Page, controller, botao_tema):
+def exibir_tela_inicial(page: ft.Page, controller):
     """
-    Exibe a tela inicial do quiz com um ícone, botão para iniciar e botão para fechar.
+    Exibe a tela inicial do quiz.
     """
 
+    # Centraliza o título usando um Container com alinhamento centralizado
+    titulo = ft.Container(
+        ft.Text("Quiz - SFPC™", size=24, weight="bold"), alignment=ft.alignment.center
+    )
+
     scrum_icon = ft.Image(
-        src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Scrum_logo.svg/2560px-Scrum_logo.svg.png",
+        src="https://ucarecdn.com/6cf435db-3b5e-4833-9f06-bce1388e9610/-/format/auto/-/preview/600x600/-/quality/lighter/CertiProf-Scrum-Foundation.png",
         width=100,
         height=100,
     )
-    button_start = ft.ElevatedButton("Iniciar Quiz", on_click=controller.iniciar_quiz)
-    button_close = ft.ElevatedButton("Fechar", on_click=lambda _: page.window.close())
+
+    # Botões com tamanho aumentado
+    button_start = ft.ElevatedButton(
+        "Iniciar Quiz", on_click=controller.iniciar_quiz, width=200, height=50
+    )
+    button_close = ft.ElevatedButton(
+        "Fechar", on_click=lambda _: page.window.close(), width=200, height=50
+    )
+
+    # Botão "Certificação agora!" com link externo
+    button_certificacao = ft.ElevatedButton(
+        "Certificação agora!",
+        on_click=lambda _: page.launch_url(
+            "https://certiprof.com/pages/sfpc-scrum-foundation-certification-portuguese?srsltid=AfmBOopH_aNk26kwJWdz54azChJOrEy9F9xy8lUFa3F63pBq6bWBf602"
+        ),
+        width=200,
+        height=50,
+    )
 
     # Adiciona os elementos à página em uma coluna centralizada
     page.add(
         ft.Column(
             [
+                titulo,  # Título centralizado
                 scrum_icon,
                 button_start,
                 button_close,
-                botao_tema  # Adiciona o botão de tema à tela inicial
+                button_certificacao,  # Botão de certificação
             ],
             alignment=ft.MainAxisAlignment.CENTER,
             horizontal_alignment=ft.CrossAxisAlignment.CENTER,
         )
     )
+
 
 def exibir_pergunta(
     page: ft.Page, pergunta: Pergunta, estado_quiz: EstadoQuiz, controller

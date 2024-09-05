@@ -4,11 +4,10 @@ from app.controllers import QuizController
 
 def main(page: ft.Page):
     """
-    Função principal que inicializa e executa o aplicativo Flet,
-    incluindo o monitoramento do Google Docs em segundo plano.
+    Função principal que inicializa o aplicativo Flet.
     """
 
-    page.title = "Quiz - Teste seus conhecimentos!"
+    #page.title = "Quiz - Teste seus conhecimentos!"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
@@ -20,14 +19,24 @@ def main(page: ft.Page):
         nonlocal tema_escuro
         tema_escuro = not tema_escuro
         page.theme_mode = ft.ThemeMode.DARK if tema_escuro else ft.ThemeMode.LIGHT
-        botao_tema.text = "Tema Claro" if tema_escuro else "Tema Escuro"
+        switch_tema.label = "Tema Escuro" if tema_escuro else "Tema Claro"
         page.update()
 
-    # Cria o botão para alternar o tema
-    botao_tema = ft.ElevatedButton("Tema Escuro", on_click=mudar_tema)
+    # Cria o Switch para alternar o tema
+    switch_tema = ft.Switch(
+        label="Tema Escuro",
+        value=False,  # Valor inicial: tema claro
+        on_change=mudar_tema,
+    )
 
     # Inicializa o Controller
-    quiz_controller = QuizController(page, botao_tema)  # Passa o botão de tema
+    quiz_controller = QuizController(page, switch_tema)  # Passa o switch de tema
+
+    # Adiciona o switch de tema ao AppBar da página
+    page.appbar = ft.AppBar(actions=[switch_tema])
+
+    # Exibe a tela inicial
+    quiz_controller.exibir_tela_inicial()
 
 
 ft.app(target=main)
