@@ -65,9 +65,9 @@ def extract_questions_from_doc(document_id):
                 continue
 
             # Verifica se o texto corresponde ao formato de uma opção de resposta:
-            if len(text) > 2 and text[0].islower() and text[1] == ")":
+            if len(text) > 2 and text[0].islower() and text[1] == ')':
                 current_question.append(text[2:].strip())
-                if "bold" in elements[0].get("textRun", {}).get("textStyle", {}):
+                if 'bold' in elements[0].get('textRun', {}).get('textStyle', {}):
                     correct_answer = text[0]
             else:
                 # Se não for uma opção, é uma nova pergunta
@@ -92,12 +92,11 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     em uma coluna diferente. Preenche as opções de resposta faltantes
     com strings vazias. Exibe uma mensagem de aviso para perguntas
     com menos de 4 opções.
-    Aplica formatação em negrito à coluna "Pergunta" e à opção correta.
-    Remove a tag <b> da coluna "Opção 2".
 
     Args:
-        questions: Uma lista de listas representando as perguntas e respostas.
-        spreadsheet_url: A URL da planilha.
+        questions: Lista de listas, onde cada sublista é uma pergunta
+                    com suas opções e resposta correta.
+        spreadsheet_url: URL da planilha.
     """
 
     credentials = ServiceAccountCredentials.from_json_keyfile_name(
@@ -108,33 +107,23 @@ def write_to_spreadsheet(questions, spreadsheet_url):
     sheet = client.open_by_url(spreadsheet_url).sheet1
     existing_questions = sheet.col_values(1)[1:]  # Ignora o cabeçalho
 
-    new_questions = [
-        question for question in questions if question[0] not in existing_questions
-    ]
+    new_questions = []
+    for question in questions:
+        # Verifica se a pergunta (sem formatação) já existe na planilha
+        question_text = question[0].replace("<b>", "").replace("</b>", "") 
+        if question_text not in existing_questions:  
+            new_questions.append(question)
 
     if new_questions:
         formatted_questions = []
         for question in new_questions:
             # Verifica se a pergunta tem pelo menos 4 opções de resposta
             if len(question) < 5:
-                print(
-                    f"Aviso: A pergunta '{question[0]}' tem menos de 4 opções de resposta. Verifique o Google Docs."
-                )
+                print(f"Aviso: A pergunta '{question[0]}' tem menos de 4 opções de resposta. Verifique o Google Docs.")
 
-            # Remove todas as tags <b> e </b> antes da formatação
+            # Remove todas as tags <b> e </b> de todos os elementos da pergunta
             for i in range(len(question)):
                 question[i] = question[i].replace("<b>", "").replace("</b>", "")
-
-            # Formata a pergunta em negrito
-            question[0] = f"<b>{question[0]}</b>"
-
-            # Formata a opção correta em negrito (apenas na pergunta atual)
-            if len(question) == 6 and question[5] in ["a", "b", "c", "d"]:
-                correct_option_index = ord(question[5]) - ord("a") + 1
-                if 1 <= correct_option_index <= 4:
-                    question[correct_option_index] = (
-                        f"<b>{question[correct_option_index]}</b>"
-                    )
 
             # Preenche as opções de resposta faltantes com strings vazias
             while len(question) < 6:
