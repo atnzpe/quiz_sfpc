@@ -11,6 +11,7 @@ from automate_spreadsheet import (
     monitor_google_docs,
 )  # Importa a função de monitoramento
 import threading  # Importa a biblioteca para trabalhar com threads
+from flet import *
 
 
 def main(page: ft.Page):
