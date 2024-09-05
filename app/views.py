@@ -10,9 +10,11 @@ import threading
 pygame.mixer.init()
 
 # Função para reproduzir um áudio aleatório de uma pasta dentro da pasta audio
+# Função para reproduzir um áudio aleatório de uma pasta
 def reproduzir_audio(pasta):
     """Reproduz um áudio aleatório da pasta especificada."""
-    caminho_pasta = os.path.join(os.path.dirname(__file__), 'audio', pasta)  # Caminho relativo
+    # Corrigindo o caminho para a pasta 'audio'
+    caminho_pasta = os.path.join(os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir)), 'audio', pasta)
     arquivos_de_audio = [
         f for f in os.listdir(caminho_pasta) if f.endswith(".mp3") or f.endswith(".wav")
     ]
@@ -21,7 +23,6 @@ def reproduzir_audio(pasta):
         caminho_do_audio = os.path.join(caminho_pasta, audio_aleatorio)
         pygame.mixer.music.load(caminho_do_audio)  # Carrega o áudio
         pygame.mixer.music.play()  # Reproduz o áudio
-
 
 def exibir_tela_inicial(page: ft.Page, controller):
     """Exibe a tela inicial do quiz."""
