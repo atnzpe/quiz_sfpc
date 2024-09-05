@@ -8,25 +8,28 @@ from .views import (
     exibir_resultados,
 )  # Importa as funções de visualização
 
-
 class QuizController:
-    def __init__(self, page: ft.Page, botao_tema):  # Recebe o botão de tema
+    """
+    Controla o fluxo do quiz, gerenciando a interação entre o modelo (dados),
+    a visualização (interface do usuário) e a lógica do quiz.
+    """
+    def __init__(self, page: ft.Page):
         """
         Inicializa o controlador do quiz.
-        """
-        self.page = page
-        self.botao_tema = botao_tema  # Armazena o botão
-        self.estado_quiz = EstadoQuiz()
-        self.quiz_logic = QuizLogic()
-        self.exibir_tela_inicial()
 
-    def exibir_tela_inicial(self):
+        Args:
+            page (ft.Page): A página do Flet para interagir com a interface do usuário.
+        """
+        self.page = page  # Referência à página do Flet
+        self.estado_quiz = EstadoQuiz()  # Cria uma instância do estado do quiz
+        self.quiz_logic = QuizLogic()  # Cria uma instância da lógica do quiz
+        self.exibir_tela_inicial()  # Exibe a tela inicial ao iniciar
+
+    def exibir_tela_inicial(self,botao_tema):
         """Exibe a tela inicial do quiz."""
-        self.page.clean()
-        exibir_tela_inicial(
-            self.page, self, self.botao_tema
-        )  # Passa o botão para a View
-        self.page.update()
+        self.page.clean()  # Limpa a página
+        exibir_tela_inicial(self,self.page,botao_tema)  # Passa o botão de tema para a View
+        self.page.update() 
 
     def iniciar_quiz(self, e):
         """
@@ -35,7 +38,7 @@ class QuizController:
         Args:
             e: O evento que acionou a função (ex: clique do botão).
         """
-        if not self.estado_quiz.quiz_iniciado:  # Verifica se o quiz já foi iniciado
+        if not self.estado_quiz.quiz_iniciado: # Verifica se o quiz já foi iniciado
             self.estado_quiz.quiz_iniciado = True
             self.proxima_pergunta(e)
 
@@ -50,7 +53,9 @@ class QuizController:
             # Cria uma instância de Pergunta com os dados da pergunta atual
             pergunta_atual = self.quiz_logic.questions[self.estado_quiz.pergunta_atual]
             pergunta = Pergunta(
-                pergunta_atual[0], pergunta_atual[1:5], pergunta_atual[5]
+                pergunta_atual[0],
+                pergunta_atual[1:5],
+                pergunta_atual[5]
             )
             exibir_pergunta(self.page, pergunta, self.estado_quiz, self)
             self.estado_quiz.pergunta_atual += 1
@@ -65,13 +70,9 @@ class QuizController:
             e: O evento que acionou a função, contendo informações sobre a resposta selecionada.
         """
         if not self.estado_quiz.quiz_finalizado:  # Verifica se o quiz já foi finalizado
-            if (
-                e.control.data
-                == self.quiz_logic.questions[self.estado_quiz.pergunta_atual - 1].index(
+            if e.control.data == self.quiz_logic.questions[self.estado_quiz.pergunta_atual - 1].index(
                     self.quiz_logic.questions[self.estado_quiz.pergunta_atual - 1][5]
-                )
-                - 1
-            ):
+                ) - 1:
                 self.estado_quiz.pontuacao += 1
             self.proxima_pergunta(e)
 
@@ -94,7 +95,7 @@ class QuizController:
             e: O evento que acionou a função.
         """
         self.estado_quiz = EstadoQuiz()  # Reinicia o estado do quiz
-        self.quiz_logic = (
-            QuizLogic()
-        )  # Reinicia a lógica do quiz (carrega novas perguntas)
+        self.quiz_logic = QuizLogic()  # Reinicia a lógica do quiz (carrega novas perguntas)
         self.exibir_tela_inicial()
+
+    

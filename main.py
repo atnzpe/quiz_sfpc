@@ -1,39 +1,33 @@
 import flet as ft
 from app.controllers import QuizController
 
+
 def main(page: ft.Page):
     """
-    Função principal que inicializa e executa o aplicativo Flet, 
-    permitindo ao usuário escolher o tema (claro ou escuro) na tela inicial.
+    Função principal que inicializa e executa o aplicativo Flet,
+    incluindo o monitoramento do Google Docs em segundo plano.
     """
 
-    page.title = "Quiz Scrum Foundation Professional Certification (SFPC™) - Teste seus conhecimentos!"
+    page.title = "Quiz - Teste seus conhecimentos!"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
     # Variável para controlar o tema (padrão: claro)
-    tema_escuro = False  
+    tema_escuro = False
 
     def mudar_tema(e):
-        """
-        Função para alternar entre os temas claro e escuro.
-        """
+        """Alterna entre os temas claro e escuro."""
         nonlocal tema_escuro
         tema_escuro = not tema_escuro
         page.theme_mode = ft.ThemeMode.DARK if tema_escuro else ft.ThemeMode.LIGHT
+        botao_tema.text = "Tema Claro" if tema_escuro else "Tema Escuro"
         page.update()
 
     # Cria o botão para alternar o tema
-    botao_tema = ft.ElevatedButton(
-        "Tema Escuro" if tema_escuro else "Tema Claro", 
-        on_click=mudar_tema
-    )
+    botao_tema = ft.ElevatedButton("Tema Escuro", on_click=mudar_tema)
 
     # Inicializa o Controller
-    quiz_controller = QuizController(page)
+    quiz_controller = QuizController(page, botao_tema)  # Passa o botão de tema
 
-    # Adiciona o botão de tema à tela inicial
-    quiz_controller.exibir_tela_inicial(botao_tema) 
 
 ft.app(target=main)
-
