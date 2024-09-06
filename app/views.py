@@ -133,7 +133,7 @@ def exibir_pergunta(
     atualizar_tempo()
 
 
-def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
+def exibir_resultados(page: ft.Page, estado_quiz, controller):
     """Exibe os resultados do quiz."""
 
     def close_dlg(e):
@@ -141,7 +141,6 @@ def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
         dlg_modal.open = False
         page.update()
 
-    # Cria o diálogo modal para exibir os resultados
     dlg_modal = ft.AlertDialog(
         modal=True,
         title=ft.Text("Fim do Quiz!"),
@@ -151,11 +150,11 @@ def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
         actions=[
             ft.TextButton("Fechar", on_click=close_dlg),
         ],
-        on_dismiss=lambda e: print(
-            "Modal dialog dismissed!"
-        ),  # Ação ao fechar o diálogo
+        on_dismiss=lambda e: print("Modal dialog dismissed!"),
     )
-    page.dialog = dlg_modal
+
+    # Correção: Usar page.overlay.append(dialog)
+    page.overlay.append(dlg_modal)  # Adiciona o diálogo ao overlay da página
     dlg_modal.open = True
     page.update()
 
