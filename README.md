@@ -5,7 +5,7 @@ Este é um aplicativo de quiz interativo em desenvolvimento que visa proporciona
 **Detalhes do Exame:**
 
 * **Formato:** Perguntas de múltipla escolha
-* **Perguntas:** 40
+* **Perguntas:** 40.
 * **Livro aberto:** Não
 * **Idioma:** Inglês / Espanhol / Português (em desenvolvimento)
 * **Pontuação de aprovação:** 32/40 (80%) - Ver.2020
