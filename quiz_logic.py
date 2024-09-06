@@ -72,10 +72,14 @@ class QuizLogic:
             question_data = self.questions[self.current_question]
             question_text = f"{self.current_question + 1}. {question_data[0]}"
             options = question_data[1:5]
+
+            # Cria uma lista com as letras das opções
+            option_letters = ['a', 'b', 'c', 'd']
             random.shuffle(options)  # Embaralha as opções
 
-            # Correção: Busca o índice da resposta correta na lista embaralhada
-            correct_answer = options.index(question_data[5])
+            # Encontra o índice da resposta correta na lista de letras
+            correct_answer = option_letters.index(question_data[5].strip().lower())
+
             return question_text, options, correct_answer
         else:
             return None, None, None
