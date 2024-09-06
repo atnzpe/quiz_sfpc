@@ -23,9 +23,9 @@ class QuizLogic:
             "https://www.googleapis.com/auth/drive",
         ]
 
-        # Carrega as credenciais da conta de serviço do arquivo 'credentials_sheets.json' 
+        # Carrega as credenciais da conta de serviço do arquivo 'credentials_sheets.json'
         self.creds = ServiceAccountCredentials.from_json_keyfile_name(
-            "credentials_sheets.json", self.scope # Nome do arquivo corrigido
+            "credentials_sheets.json", self.scope  # Nome do arquivo corrigido
         )
         self.client = gspread.authorize(self.creds)
 
@@ -67,13 +67,23 @@ class QuizLogic:
         """
         Carrega a próxima pergunta do quiz, embaralha as opções de resposta
         e retorna a pergunta, opções e índice da resposta correta.
+
         """
+
         if self.current_question < len(self.questions):
             question_data = self.questions[self.current_question]
+            print(
+                f"Resposta correta antes do embaralhamento: {question_data[5]} (índice original: {question_data.index(question_data[5]) - 1})"
+            )  # Adicione esta linha
+
             question_text = f"{self.current_question + 1}. {question_data[0]}"
             options = question_data[1:5]
             random.shuffle(options)  # Embaralha as opções
-            correct_answer = question_data.index(question_data[5]) - 1
+            correct_answer = options.index(question_data[5].strip()) 
+
+            print(
+                f"Resposta correta depois do embaralhamento: {options[correct_answer]} (novo índice: {correct_answer})"
+            )  # Adicione esta linha
             return question_text, options, correct_answer
         else:
             return None, None, None

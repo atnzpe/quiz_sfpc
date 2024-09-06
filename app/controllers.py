@@ -56,13 +56,9 @@ class QuizController:
     def verificar_resposta(self, e):
         """Verifica a resposta selecionada pelo usuário."""
         if not self.estado_quiz.quiz_finalizado:
-            if (
-                e.control.data
-                == self.quiz_logic.questions[self.estado_quiz.pergunta_atual - 1].index(
-                    self.quiz_logic.questions[self.estado_quiz.pergunta_atual - 1][5]
-                )
-                - 1
-            ):
+            # Correção: Comparar índice com índice
+            resposta_correta = self.quiz_logic.load_question()[2]  # Obtém o índice da resposta correta
+            if e.control.data == resposta_correta:
                 self.estado_quiz.pontuacao += 1
                 if self.som_ativado:
                     reproduzir_audio(
@@ -93,10 +89,7 @@ class QuizController:
 
         def atualizar_tempo():
             """Atualiza o tempo restante a cada segundo."""
-            if (
-                self.estado_quiz.tempo_restante > 0
-                and self.estado_quiz.quiz_iniciado
-            ):
+            if self.estado_quiz.tempo_restante > 0 and self.estado_quiz.quiz_iniciado:
                 self.estado_quiz.tempo_restante -= 1
                 self.atualizar_texto_tempo()
                 self.timer = threading.Timer(1, atualizar_tempo)
@@ -123,5 +116,3 @@ class QuizController:
                 f"Tempo restante: {horas:02d}:{minutos:02d}:{segundos:02d}"
             )
             self.page.update()
-
-    
