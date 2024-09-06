@@ -1,7 +1,9 @@
 
 import flet as ft
 from app.controllers import QuizController
-from flet import icons # Importe icons do Flet
+from flet import icons
+import threading
+import automate_spreadsheet  # Importe o módulo automate_spreadsheet
 
 def main(page: ft.Page):
     """
@@ -11,6 +13,17 @@ def main(page: ft.Page):
     page.title = "Quiz - Teste seus conhecimentos!"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    
+    # Inicia a atualização das perguntas em uma thread separada
+    thread_atualizacao = threading.Thread(
+        target=automate_spreadsheet.monitor_google_docs,  
+        args=(
+            automate_spreadsheet.DOCUMENT_ID,
+            automate_spreadsheet.SPREADSHEET_URL,
+        ),
+    )
+    thread_atualizacao.daemon = True
+    thread_atualizacao.start()
 
     # Variável para controlar o tema (padrão: claro)
     tema_escuro = False
