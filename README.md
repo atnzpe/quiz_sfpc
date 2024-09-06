@@ -26,22 +26,27 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 ### Em Desenvolvimento Ativo:
 
 - **Funcionalidades Essenciais do Quiz:**
-    - Apresentação de quatro opções de resposta para cada pergunta, desafiando o conhecimento dos usuários de forma eficaz.
-    - Implementação de um temporizador de 1 hora para criar uma atmosfera de desafio e simular um ambiente de teste real.
-    - Feedback imediato sobre a resposta escolhida, informando se está correta ou incorreta, e permitindo que os usuários aprendam durante o processo.
-    - Cálculo e exibição da pontuação final, acompanhada de uma mensagem clara de aprovação ou reprovação, motivando os usuários a melhorar seu desempenho.
+    - Apresentação de quatro opções de resposta para cada pergunta. ✅
+    - Implementação de um temporizador de 1 hora. ✅
+    - Feedback imediato sobre a resposta escolhida, informando se está correta ou incorreta. ✅
+    - Cálculo e exibição da pontuação final, acompanhada de uma mensagem clara de aprovação ou reprovação. ✅
+- **Melhorias na Experiência do Usuário (UX):**
+    - Exibir link para download do Guia Scrum para usuários não aprovados.
+    - Retornar à tela inicial ao fechar o modal de resultados.
+    - Refinar a reprodução de áudio para momentos específicos do quiz.
 
 ### Funcionalidades Implementadas:
 
 - **Base Sólida:**
-    - Lógica principal do quiz, incluindo o controle das perguntas, respostas, temporizador e pontuação, fornecendo uma base sólida para o desenvolvimento futuro.
-    - Interface da tela inicial com elementos centralizados e botões com tamanho otimizado, proporcionando uma primeira impressão positiva e intuitiva aos usuários, convidando-os a iniciar o quiz.
-    - Estrutura de código organizada com o padrão MVC (Model-View-Controller), facilitando a manutenção e a evolução do projeto. 
-    - Implementação de um sistema de cache offline usando JSON, garantindo que os usuários possam aproveitar o quiz mesmo sem conexão com a internet.
-    - Integração com Google Sheets para carregar perguntas, permitindo que o conteúdo do quiz seja gerenciado de forma externa e fácil.
-    - Integração com Google Docs para carregar perguntas, automatizando o processo de atualização do quiz a partir de um documento centralizado.
-    - Monitoramento contínuo do Google Docs para atualização automática, garantindo que o quiz esteja sempre atualizado com as últimas perguntas.
-    - Seletor de tema claro/escuro, permitindo que o usuário personalize a aparência do aplicativo de acordo com suas preferências.
+    - Lógica principal do quiz, incluindo o controle das perguntas, respostas, temporizador e pontuação. ✅
+    - Interface da tela inicial com elementos centralizados e botões com tamanho otimizado. ✅
+    - Estrutura de código organizada com o padrão MVC (Model-View-Controller). ✅
+    - Implementação de um sistema de cache offline usando JSON. ✅
+    - Integração com Google Sheets para carregar perguntas. ✅
+    - Integração com Google Docs para carregar perguntas. ✅
+    - Monitoramento contínuo do Google Docs para atualização automática. ✅
+    - Seletor de tema claro/escuro. ✅
+    - Correção da lógica de pontuação do quiz. ✅
 
 ## Configuração das Credenciais do Google Cloud:
 
@@ -93,8 +98,7 @@ A tela inicial do aplicativo já está implementada, proporcionando uma recepç�
 
 ## Formato das Perguntas no Google Docs:
 
-- As perguntas devem estar numeradas (ex: 1., 2., 3., etc.).
-- A pergunta em si e a resposta correta devem estar formatadas em **negrito**.
+- **A pergunta em si e a resposta correta devem estar formatadas em negrito.**
 - As opções de resposta devem ser formatadas com letras (a), b), c), d)).
 
 ## Próximos Passos:
@@ -105,6 +109,10 @@ O desenvolvimento do Quiz App está em ritmo acelerado! Nossos próximos passos 
 - Implementar testes abrangentes para garantir a qualidade do código e a robustez do aplicativo.
 - Realizar testes de usabilidade com usuários reais para coletar feedback e aprimorar a experiência do usuário.
 - Explorar opções de implantação para disponibilizar o quiz online e torná-lo acessível a todos.
+- **Publicar o Aplicativo:** 
+    - Seguir as instruções de publicação do Flet: [https://flet.dev/docs/publish](https://flet.dev/docs/publish)
+    - Explorar opções de publicação, como Flet Cloud, Streamlit Cloud, Heroku, PythonAnywhere, entre outras.
+    - Definir a melhor plataforma de publicação com base nas necessidades do projeto e do público-alvo.
 
 ## Como Contribuir:
 
