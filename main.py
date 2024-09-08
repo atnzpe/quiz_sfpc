@@ -1,16 +1,23 @@
+import threading
 
 import flet as ft
-from app.controllers import QuizController
 from flet import icons
-import threading
-import automate_spreadsheet  # Importe o módulo automate_spreadsheet
+
+import automate_spreadsheet
+from app.controllers import QuizController
+from app.models import EstadoQuiz  
+from quiz_logic import QuizLogic 
+from app.views import exibir_pergunta, exibir_resultados, exibir_tela_inicial 
 
 def main(page: ft.Page):
     """
-    Função principal que inicializa o aplicativo Flet.
+    Função principal que inicializa o aplicativo Flet do Quiz SFPC.
+    
+    Args:
+        page (ft.Page): Objeto página do Flet.
     """
 
-    page.title = "Quiz - Teste seus conhecimentos!"
+    page.title = "Quiz - Scrum Foundation Professional Certification - SFPC™ (v2020)"
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     
@@ -26,26 +33,35 @@ def main(page: ft.Page):
     thread_atualizacao.start()
 
     # Variável para controlar o tema (padrão: claro)
-    tema_escuro = False
+    tema_escuro_ativado = False 
 
     # Variável para controlar o som (padrão: ativado)
     som_ativado = True
 
     def mudar_tema(e):
-        """Alterna entre os temas claro e escuro."""
-        nonlocal tema_escuro
-        tema_escuro = not tema_escuro
-        page.theme_mode = ft.ThemeMode.DARK if tema_escuro else ft.ThemeMode.LIGHT
-        switch_tema.label = "Tema Escuro" if tema_escuro else "Tema Claro"
+        """
+        Alterna entre os temas claro e escuro da aplicação.
+        
+        Args:
+            e: Objeto evento do Flet.
+        """
+        nonlocal tema_escuro_ativado
+        tema_escuro_ativado = not tema_escuro_ativado
+        page.theme_mode = ft.ThemeMode.DARK if tema_escuro_ativado else ft.ThemeMode.LIGHT
+        switch_tema.label = "Tema Escuro" if tema_escuro_ativado else "Tema Claro"
         page.update()
 
     def alternar_som(e):
-        """Ativa/desativa o som do quiz."""
+        """
+        Ativa/desativa os efeitos sonoros do quiz.
+        
+        Args:
+            e: Objeto evento do Flet.
+        """
         nonlocal som_ativado
         som_ativado = not som_ativado
         botao_som.icon = icons.VOLUME_UP if som_ativado else icons.VOLUME_OFF
-        # Atualiza o estado do som no controlador
-        quiz_controller.som_ativado = som_ativado
+        quiz_controller.som_ativado = som_ativado  # Atualiza o controlador
         page.update()
 
     # Cria o Switch para alternar o tema
@@ -68,7 +84,7 @@ def main(page: ft.Page):
     page.appbar = ft.AppBar(
         title=ft.Text("Quiz - SFPC™"),
         actions=[
-            ft.Row([switch_tema, botao_som], alignment=ft.MainAxisAlignment.END) # Agrupa os botões no AppBar
+            ft.Row([switch_tema, botao_som], alignment=ft.MainAxisAlignment.END) 
         ]
     )
 
