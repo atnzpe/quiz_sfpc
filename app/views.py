@@ -199,6 +199,7 @@ def exibir_resultados(page: ft.Page, estado_quiz, controller):
         #  Remove a chamada à função controller.exibir_tela_inicial()
         # Atualiza a página
         page.update()
+        print("Dialogo modal fechado")
 
     # Cria o diálogo modal (AlertDialog) para exibir os resultados
     dlg_modal = ft.AlertDialog(
