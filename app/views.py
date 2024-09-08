@@ -1,10 +1,7 @@
 import flet as ft
-from .models import (
-    Pergunta,
-    EstadoQuiz,
-)  # Importa classes para gerenciar perguntas e estado do quiz
+from .models import Pergunta, EstadoQuiz
 import random
-import pygame  # Importa biblioteca para reprodução de áudio
+import pygame
 import os
 import threading
 
@@ -181,8 +178,7 @@ def exibir_pergunta(
 # Função para exibir os resultados do quiz
 def exibir_resultados(page: ft.Page, estado_quiz, controller):
     """
-    Exibe os resultados do quiz, incluindo estatísticas, mensagem de aprovação/reprovação
-    e link para download do guia (se necessário).
+    Exibe os resultados do quiz usando AlertDialog.
     """
 
     # Calcula as estatísticas do quiz
@@ -190,57 +186,51 @@ def exibir_resultados(page: ft.Page, estado_quiz, controller):
     total_acertos = estado_quiz.pontuacao
     total_erros = total_perguntas - total_acertos
 
-    # Define uma função interna para fechar o diálogo modal de resultados
-    def close_dlg(e):
-        """Fecha o diálogo modal e retorna à tela inicial."""
-        # Fecha o diálogo modal
-        dlg_modal.open = False
-        # Chama a função exibir_tela_inicial do controlador
-        #  Remove a chamada à função controller.exibir_tela_inicial()
-        # Atualiza a página
-        page.update()
-        print("Dialogo modal fechado")
+    # Verifica se o modal já está aberto
+    if not controller.modal_aberto:
 
-    # Cria o diálogo modal (AlertDialog) para exibir os resultados
-    dlg_modal = ft.AlertDialog(
-        modal=True,  # Define o diálogo como modal
-        title=ft.Text("Fim do Quiz!"),  # Define o título do diálogo
-        # Define o conteúdo do diálogo como uma coluna
-        content=ft.Column(
-            [
-                ft.Text(
-                    f"Sua pontuação final: {estado_quiz.pontuacao}/{total_perguntas}"
-                ),  # Exibe a pontuação final
-                ft.Text(f"Acertos: {total_acertos}"),  # Exibe o número de acertos
-                ft.Text(f"Erros: {total_erros}"),  # Exibe o número de erros
-                ft.Text(
-                    f"{'Aprovado!' if estado_quiz.pontuacao >= 32 else 'Reprovado.'}"
-                ),  # Exibe a mensagem de aprovação ou reprovação
-            ]
-        ),
-        actions=[
-            btn_result__close,  # Adiciona o botão "Fechar" ao diálogo
-        ],
-        on_dismiss=close_dlg,  # Define o evento on_dismiss para chamar a função close_dlg
-    )
+        def close_dlg(e):
+            """Fecha o diálogo modal."""
+            dlg_modal.open = False
+            controller.modal_aberto = False  # Define modal_aberto como False
+            page.update()
 
-    # Se o usuário for reprovado, adiciona um botão para baixar o Guia Scrum
-    if estado_quiz.pontuacao < 32:
-        dlg_modal.actions.append(
-            ft.ElevatedButton(
-                "Baixar Guia Scrum",
-                on_click=lambda _: page.launch_url("https://www.scrumguides.org/"),
-            )
+        dlg_modal = ft.AlertDialog(
+            modal=True,
+            title=ft.Text("Fim do Quiz!"),
+            content=ft.Column(
+                [
+                    ft.Text(
+                        f"Sua pontuação final: {estado_quiz.pontuacao}/{total_perguntas}"
+                    ),
+                    ft.Text(f"Acertos: {total_acertos}"),
+                    ft.Text(f"Erros: {total_erros}"),
+                    ft.Text(
+                        f"{'Aprovado!' if estado_quiz.pontuacao >= 32 else 'Reprovado.'}"
+                    ),
+                ]
+            ),
+            actions=[
+                ft.ElevatedButton(
+                    "Fechar", on_click=controller.fechar_modal
+                ),  # Chamando a função
+            ],
+            on_dismiss=close_dlg,
         )
 
-    # Adiciona o diálogo modal à lista de overlays da página
-    page.overlay.append(dlg_modal)
-    # Abre o diálogo modal
-    dlg_modal.open = True
-    # Atualiza a página
-    page.update()
+        if estado_quiz.pontuacao < 32:
+            dlg_modal.actions.append(
+                ft.ElevatedButton(
+                    "Baixar Guia Scrum",
+                    on_click=lambda _: page.launch_url("https://www.scrumguides.org/"),
+                )
+            )
 
-    # Reproduz o áudio de acordo com o resultado do quiz
+        page.overlay.append(dlg_modal)
+        dlg_modal.open = True
+        controller.modal_aberto = True  # Define modal_aberto como True
+        page.update()
+
     if estado_quiz.pontuacao >= 70:
         reproduzir_audio("ganhou")
     else:
