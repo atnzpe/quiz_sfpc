@@ -4,7 +4,7 @@ import random
 import pygame
 import os
 import threading
-
+import time
 # Inicializa o mixer do Pygame para reprodução de áudio
 pygame.mixer.init()
 
@@ -235,3 +235,19 @@ def exibir_resultados(page: ft.Page, estado_quiz, controller):
         reproduzir_audio("ganhou")
     else:
         reproduzir_audio("perdeu")
+
+def piscar_verde(botao):
+    """Faz o botão piscar na cor verde."""
+    botao.bgcolor = ft.colors.GREEN
+    botao.update()
+    time.sleep(0.2)  # Ajuste o tempo de piscada aqui
+    botao.bgcolor = None
+    botao.update()
+
+def piscar_vermelho(botao):
+    """Faz o botão piscar na cor vermelha."""
+    botao.bgcolor = ft.colors.RED
+    botao.update()
+    time.sleep(0.2)  # Ajuste o tempo de piscada aqui
+    botao.bgcolor = None
+    botao.update()

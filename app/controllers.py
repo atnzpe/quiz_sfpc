@@ -1,6 +1,6 @@
 # Importa a biblioteca Flet para a criação de interfaces de usuário.
 import flet as ft
-
+import time
 # Importa a biblioteca threading para lidar com multithreading.
 import threading
 
@@ -13,9 +13,11 @@ from quiz_logic import QuizLogic
 # Importa funções do módulo views que são usadas para exibir diferentes partes da interface do quiz.
 from .views import (
     exibir_tela_inicial,  # Função para exibir a tela inicial.
-    exibir_pergunta,  # Função para exibir a pergunta atual.
-    exibir_resultados,  # Função para exibir os resultados do quiz.
+    exibir_pergunta,   # Função para exibir a pergunta atual.
+    exibir_resultados, # Função para exibir os resultados do quiz.
     reproduzir_audio,  # Função para reproduzir efeitos sonoros.
+    piscar_verde,
+    piscar_vermelho, # Importe as funções de animação
 )
 
 
@@ -120,18 +122,28 @@ class QuizController:
             # Obtém o índice da resposta correta da pergunta atual.
             resposta_correta = self.quiz_logic.load_question()[2]
             # Verifica se o índice da resposta selecionada pelo usuário corresponde ao índice da resposta correta.
+            botao_clicado = e.control  # Obtém a referência ao botão clicado
+            
             if e.control.data == resposta_correta:
                 # Se a resposta estiver correta, aumenta a pontuação do quiz.
                 self.estado_quiz.pontuacao += 1
                 # Se os efeitos sonoros estiverem ativados, reproduz o som de resposta correta.
                 if self.som_ativado:
                     reproduzir_audio("certo")
+                piscar_verde(botao_clicado) 
             else:
                 # Se os efeitos sonoros estiverem ativados, reproduz o som de resposta incorreta.
                 if self.som_ativado:
                     reproduzir_audio("errado")
-            # Carrega e exibe a próxima pergunta do quiz.
+                piscar_vermelho(botao_clicado)
+                
+            # Aguarda a animação terminar antes de ir para a próxima pergunta
+        def proxima_pergunta_com_atraso():
+            time.sleep(0.5)  # Ajuste o tempo de atraso aqui
             self.proxima_pergunta(e)
+            
+        # Carrega e exibe a próxima pergunta do quiz.
+        threading.Timer(0.1, proxima_pergunta_com_atraso).start()
 
     def finalizar_quiz(self, e):
         """
