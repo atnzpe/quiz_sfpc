@@ -4,19 +4,19 @@ from .models import (
     EstadoQuiz,
 )  # Importa as classes Pergunta e EstadoQuiz (provavelmente de um arquivo models.py)
 import random  # Importa a biblioteca random para escolher áudios aleatórios
-import pygame  # Importa a biblioteca Pygame para reprodução de áudio
+
+# import pygame  # Importa a biblioteca Pygame para reprodução de áudio
 import os  # Importa a biblioteca os para interagir com o sistema de arquivos
 import threading  # Importa a biblioteca threading para usar threads
 import time  # Importa a biblioteca time para usar funções relacionadas a tempo
 
 # Inicializa o mixer do Pygame
-pygame.mixer.init()
+# pygame.mixer.init()
 
 # Define o botão "Fechar" como uma variável global (será melhorado posteriormente)
 # Idealmente, evite variáveis globais. Melhor encapsular em uma classe para melhor organização.
-btn_result__close = ft.ElevatedButton(
-    "Fechar", on_click=None, width=200, height=50
-)
+btn_result__close = ft.ElevatedButton("Fechar", on_click=None, width=200, height=50)
+
 
 # Define a função para reproduzir áudio
 def reproduzir_audio(pasta: str):
@@ -44,9 +44,11 @@ def reproduzir_audio(pasta: str):
         # Constrói o caminho completo para o arquivo de áudio
         caminho_do_audio = os.path.join(caminho_pasta, audio_aleatorio)
         # Carrega o arquivo de áudio
-        pygame.mixer.music.load(caminho_do_audio)
-        # Reproduz o áudio
-        pygame.mixer.music.play()
+
+
+#       pygame.mixer.music.load(caminho_do_audio)
+# Reproduz o áudio
+#      pygame.mixer.music.play()
 
 
 # Define a função para exibir a tela inicial
@@ -75,9 +77,7 @@ def exibir_tela_inicial(page: ft.Page, controller):
             e: Objeto evento do Flet.
         """
         reproduzir_audio("inicio")  # Reproduz o áudio de início
-        controller.iniciar_quiz(
-            e
-        )  # Chama a função do controlador para iniciar o quiz
+        controller.iniciar_quiz(e)  # Chama a função do controlador para iniciar o quiz
 
     # Cria o botão "Iniciar Quiz"
     button_start = ft.ElevatedButton(
@@ -202,9 +202,7 @@ def exibir_pergunta(
             # Atualiza a página
             page.update()
             # Agenda a próxima chamada da função atualizar_tempo() após 1 segundo
-            page.on_idle = lambda _: threading.Timer(
-                1, atualizar_tempo
-            ).start()
+            page.on_idle = lambda _: threading.Timer(1, atualizar_tempo).start()
         else:
             # Se o tempo acabar, reproduz o áudio de "acabar"
             reproduzir_audio("acabar")
@@ -238,9 +236,7 @@ def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
         def close_dlg(e):
             """Fecha o diálogo modal."""
             dlg_modal.open = False  # Fecha o modal
-            controller.modal_aberto = (
-                False  # Define a flag de modal aberto como False
-            )
+            controller.modal_aberto = False  # Define a flag de modal aberto como False
             page.update()  # Atualiza a página
 
         # Cria o AlertDialog para exibir os resultados
@@ -285,38 +281,39 @@ def exibir_resultados(page: ft.Page, estado_quiz: EstadoQuiz, controller):
         page.update()  # Atualiza a página
 
     # Reproduz o áudio de acordo com a pontuação
-    if estado_quiz.pontuacao >= 70:
-        reproduzir_audio("ganhou")
-    else:
-        reproduzir_audio("perdeu")
+
+
+# if estado_quiz.pontuacao >= 70:
+#    reproduzir_audio("ganhou")
+# else:
+#    reproduzir_audio("perdeu")
 
 
 # Define a função para fazer o botão piscar em verde
-def piscar_verde(botao: ft.Control):
-    """
-    Faz o botão piscar na cor verde.
-
-    Args:
-        botao (ft.Control): O botão que irá piscar.
-    """
-    botao.bgcolor = ft.colors.GREEN  # Define a cor de fundo do botão para verde
-    botao.update()  # Atualiza o botão
-    time.sleep(0.2)  # Aguarda 0.2 segundos
-    botao.bgcolor = None  # Remove a cor de fundo do botão
-    botao.update()  # Atualiza o botão
+# def piscar_verde(botao: ft.Control):
+#   """
+#  Faz o botão piscar na cor verde.
+#
+#   Args:
+#      botao (ft.Control): O botão que irá piscar.
+# """
+# botao.bgcolor = ft.colors.GREEN  # Define a cor de fundo do botão para verde
+# botao.update()  # Atualiza o botão
+# time.sleep(0.2)  # Aguarda 0.2 segundos
+# botao.bgcolor = None  # Remove a cor de fundo do botão
+# botao.update()  # Atualiza o botão
 
 
 # Define a função para fazer o botão piscar em vermelho
-def piscar_vermelho(botao: ft.Control):
-    """
-    Faz o botão piscar na cor vermelha.
+# def piscar_vermelho(botao: ft.Control):
+#    """
+#    Faz o botão piscar na cor vermelha.
 
-    Args:
-        botao (ft.Control): O botão que irá piscar.
-    """
-    botao.bgcolor = ft.colors.RED  # Define a cor de fundo do botão para vermelho
-    botao.update()  # Atualiza o botão
-    time.sleep(0.2)  # Aguarda 0.2 segundos
-    botao.bgcolor = None  # Remove a cor de fundo do botão
-    botao.update()  # Atualiza o botão
-
+#    Args:
+#       botao (ft.Control): O botão que irá piscar.
+#  """
+# botao.bgcolor = ft.colors.RED  # Define a cor de fundo do botão para vermelho
+# botao.update()  # Atualiza o botão
+# time.sleep(0.2)  # Aguarda 0.2 segundos
+# botao.bgcolor = None  # Remove a cor de fundo do botão
+# botao.update()  # Atualiza o botão

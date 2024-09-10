@@ -13,9 +13,9 @@ from .views import (  # Importa funções para exibir diferentes telas do aplica
     exibir_tela_inicial,
     exibir_pergunta,
     exibir_resultados,
-    reproduzir_audio,
-    piscar_verde,
-    piscar_vermelho,
+    #reproduzir_audio,
+    #piscar_verde,
+    #piscar_vermelho,
 )
 
 # Define a classe QuizController
@@ -121,14 +121,14 @@ class QuizController:
 
             if e.control.data == resposta_correta:
                 self.estado_quiz.pontuacao += 1
-                if self.som_ativado:
-                    reproduzir_audio("certo")
-                piscar_verde(botao_clicado)
-            else:
-                if self.som_ativado:
-                    reproduzir_audio("errado")
-                piscar_vermelho(botao_clicado)  # Faz o botão piscar em vermelho
-
+                #if self.som_ativado:
+                    #reproduzir_audio("certo")
+                #piscar_verde(botao_clicado)
+                #else: # <-- Bloco else movido para cá
+                #if self.som_ativado:
+                    #reproduzir_audio("errado")
+                #piscar_vermelho(botao_clicado)  # Faz o botão piscar em vermelho
+            
             # Define a função que será executada após um pequeno atraso
             def proxima_pergunta_com_atraso():
                 """
