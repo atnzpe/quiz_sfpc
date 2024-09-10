@@ -11,7 +11,7 @@ quiz_sfpc>
 │   README.md
 │   requirements.txt
 │   tree_project.txt
-│   ui.py
+│   
 │
 ├───app
 │   │   controllers.py

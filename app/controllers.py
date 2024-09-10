@@ -112,37 +112,22 @@ class QuizController:
 
     def verificar_resposta(self, e):
         """
-        Verifica a resposta selecionada pelo usuário,
-        atualiza a pontuação e fornece feedback visual e sonoro.
-
-        Args:
-            e: Objeto evento do Flet.
+        Verifica a resposta selecionada pelo usuário.
         """
-        # Verifica se o quiz ainda não foi finalizado
         if not self.estado_quiz.quiz_finalizado:
-            resposta_correta = self.quiz_logic.load_question()[
-                2
-            ]  # Obtém o índice da resposta correta
-            botao_clicado = e.control  # Obtém o botão que foi clicado
+            # Corrigido: Usar o índice da resposta correta retornado por load_question()
+            _, _, resposta_correta = self.quiz_logic.load_question()
+            botao_clicado = e.control
 
-            # Verifica se a resposta está correta
             if e.control.data == resposta_correta:
-                self.estado_quiz.pontuacao += 1  # Incrementa a pontuação
+                self.estado_quiz.pontuacao += 1
                 if self.som_ativado:
-                    reproduzir_audio(
-                        "certo"
-                    )  # Reproduz o áudio de resposta correta
-                piscar_verde(
-                    botao_clicado
-                )  # Faz o botão piscar em verde
+                    reproduzir_audio("certo")
+                piscar_verde(botao_clicado)
             else:
                 if self.som_ativado:
-                    reproduzir_audio(
-                        "errado"
-                    )  # Reproduz o áudio de resposta errada
-                piscar_vermelho(
-                    botao_clicado
-                )  # Faz o botão piscar em vermelho
+                    reproduzir_audio("errado")
+                piscar_vermelho(botao_clicado)  # Faz o botão piscar em vermelho
 
             # Define a função que será executada após um pequeno atraso
             def proxima_pergunta_com_atraso():
