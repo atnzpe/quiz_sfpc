@@ -89,7 +89,7 @@ class QuizLogic:
 
     def load_question(self):
         """
-        Carrega a próxima pergunta do quiz. As alternativas já foram 
+        Carrega a próxima pergunta do quiz. As alternativas já foram
         embaralhadas previamente em download_and_cache_questions ou
         load_questions_from_cache.
 
@@ -130,9 +130,12 @@ class QuizLogic:
             str: Uma mensagem indicando se a resposta está correta ou incorreta.
         """
         # Obtém o índice da resposta correta da pergunta atual
-        correct_answer_index = self.questions[self.current_question].index(
-            self.questions[self.current_question][5]
-        ) - 1
+        correct_answer_index = (
+            self.questions[self.current_question].index(
+                self.questions[self.current_question][5]
+            )
+            - 1
+        )
 
         # Compara o índice da resposta selecionada com o índice da resposta correta
         if selected_answer == correct_answer_index:
@@ -157,7 +160,7 @@ class QuizLogic:
 
     def load_questions(self):
         """
-        Carrega as perguntas do quiz, priorizando o cache se houver 
+        Carrega as perguntas do quiz, priorizando o cache se houver
         conexão com a internet, caso contrário, carrega do Google Sheets.
         """
         if self.check_internet_connection():
